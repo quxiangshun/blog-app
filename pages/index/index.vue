@@ -6,16 +6,20 @@
 		<!-- #endif -->
 		<!-- 轮播图 -->
 		<jh-banner></jh-banner>
+		<!-- 分类区域 -->
+		<category-box></category-box>
 	</view>
 </template>
 
 <script>
 	import searchInput from '@/components/common/search-input.vue'
 	import jhBanner from '@/components/common/jh-banner.vue'
+	import categoryBox from './components/category-box.vue'
 	export default {
 		components: {
 			searchInput,
-			jhBanner
+			jhBanner,
+			categoryBox
 		},
 		data() {
 			return {
