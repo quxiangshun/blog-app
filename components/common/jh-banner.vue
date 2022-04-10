@@ -13,7 +13,7 @@
 		circular: 是否采用衔接滑动，即播放到末尾后重新回到开头
 		current: 当前所在滑块的 index
 		-->
-		<swiper :indicator-dots="true" indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#FFFFFF"
+		<swiper class="banner-swiper" :indicator-dots="true" indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#FFFFFF"
 			:autoplay="true" :interval="4000" :duration="1000" :circular="true" :current="current" @change="change">
 			<swiper-item class="swiper-item">
 				<image src="../../static/images/banner1.jpg"></image>
@@ -48,5 +48,39 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
+	.banner-box {
+		padding-top: 120rpx;
+		/* #ifdef APP-PLUS */
+		padding-top: calc(var(--status-bar-height) + 120rpx);
+		/* #endif */
+		.banner-bg {
+			position: absolute;
+			top: 0;
+			width: 100%;
+			height: 470rpx;
+			/* #ifdef APP-PLUS */
+			padding-top: calc(var(--status-bar-height) + 470rpx);
+			/* #endif */
+			background-color: red;
+			// 颜色渐变
+			background-image: linear-gradient(red 50%, #FFF);
+			// 过度效果
+			transform: .5s;
+		}
+		.banner-swiper {
+			width: 100%;
+			height: 350rpx;
+			.swiper-item {
+				width: 100%;
+				height: 100%;
+				padding: 0 30rpx;
+				image {
+					width: 100%;
+					height: 100%;
+					border-radius: 15rpx;
+				}
+			}
+		}
+	}
 </style>
