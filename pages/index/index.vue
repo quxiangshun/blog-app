@@ -1,18 +1,19 @@
 <template>
-	<view class="content">
-		<image class="logo" src="/static/logo.png"></image>
-		<view class="text-area">
-			<text class="title">{{title}} => {{page}}</text>
-		</view>
-		<text v-for="i in 50" :key="i">{{i}}</text>
+	<view class="index-box">
+		<!-- #ifdef MP -->
+		<!-- 搜索框在小程序中显示 -->
+		<search-input></search-input>
+		<!-- #endif -->
 	</view>
 </template>
 
 <script>
+	import searchInput from '@/components/common/search-input.vue'
 	export default {
+		components: { searchInput },
 		data() {
 			return {
-				title: 'Hello'
+				title: ''
 			}
 		},
 		onLoad() {
@@ -25,29 +26,5 @@
 </script>
 
 <style>
-	.content {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-	}
 
-	.logo {
-		height: 200rpx;
-		width: 200rpx;
-		margin-top: 200rpx;
-		margin-left: auto;
-		margin-right: auto;
-		margin-bottom: 50rpx;
-	}
-
-	.text-area {
-		display: flex;
-		justify-content: center;
-	}
-
-	.title {
-		font-size: 36rpx;
-		color: #8f8f94;
-	}
 </style>
