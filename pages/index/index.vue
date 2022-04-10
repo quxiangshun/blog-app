@@ -4,14 +4,18 @@
 		<!-- 搜索框在小程序中显示 -->
 		<search-input></search-input>
 		<!-- #endif -->
+		<!-- 轮播图 -->
+		<jh-banner></jh-banner>
 	</view>
 </template>
 
 <script>
 	import searchInput from '@/components/common/search-input.vue'
+	import jhBanner from '@/components/common/jh-banner.vue'
 	export default {
 		components: {
-			searchInput
+			searchInput,
+			jhBanner
 		},
 		data() {
 			return {
@@ -58,13 +62,14 @@
 						}
 					});
 				}, 3000)
-			}
+			},
+			
 		}
 	}
 </script>
 
 <style>
 	page {
-		background-color: #000080;
+		/* background-color: #000080; */
 	}
 </style>
