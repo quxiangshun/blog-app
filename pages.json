@@ -1,0 +1,83 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				// 导航区域的字体颜色
+				"navigationBarTextStyle":"white",
+				"navigationBarBackgroundColor":"#345DC2",
+				// "navigationBarTitleText": "天韵戏曲"
+				"app-plus": {
+					// 自定义导航配置
+					"titleNView": {
+						"searchInput": {
+							// 默认不自动获取焦点
+							"autoFocus": false,
+							// 默认居中显示
+							"align": "center",
+							"backgroundColor": "#F0F1F2",
+							// "backgroundColor": "#000",
+							"borderRadius": "30rpx",
+							// 提示信息
+							"placeholder": "搜索你想要的内容",
+							// 提示文本颜色
+							"placeholderColor": "#979C9D",
+							// 禁止输入，通过点击跳转到搜索页
+							"disabled": true
+						},
+						"buttons": [{
+							// 此处用的是Unicode方式，此处路径必须放在static下
+							"fontSrc": "/static/icon/iconfont.ttf",
+							// 不能直接使用Unicode，必须以\u开头，譬如：\ue123(注意不能写成\e123)
+							"text": "\ue689",
+							// 位置默认是右边
+							"float": "right",
+							"fontSize": "23"
+							// "color": "rgba(0, 0, 0,0)",
+							// 按钮全透明背景
+							// "background": "rgba(0, 0, 0,0)"
+						}],
+						// 透明样式，顶部沉浸式显示(透明渐变)
+						"type":"transparent"
+					},
+					// 关闭回弹效果
+					"bounce": "none"
+				}
+			}
+		}, {
+			"path": "pages/category/category",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/article/article",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/question/question",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/my/my",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}
