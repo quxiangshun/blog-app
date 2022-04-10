@@ -32,10 +32,10 @@
 							"text": "\ue689",
 							// 位置默认是右边
 							"float": "right",
-							"fontSize": "23"
+							"fontSize": "23",
 							// "color": "rgba(0, 0, 0,0)",
-							// 按钮全透明背景
-							// "background": "rgba(0, 0, 0,0)"
+							// 按钮全透明背景，结合"type":"transparent"使用
+							"background": "rgba(0, 0, 0,0)"
 						}],
 						// 透明样式，顶部沉浸式显示(透明渐变)
 						"type":"transparent"
