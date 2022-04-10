@@ -11,9 +11,10 @@
 		interval: 自动切换时长
 		duration: 动画时长
 		circular: 是否采用衔接滑动，即播放到末尾后重新回到开头
+		current: 当前所在滑块的 index
 		-->
 		<swiper :indicator-dots="true" indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#FFFFFF"
-			:autoplay="true" :interval="3000" :duration="1000" :circular="true" :current="current" @change="change">
+			:autoplay="true" :interval="4000" :duration="1000" :circular="true" :current="current" @change="change">
 			<swiper-item class="swiper-item">
 				<image src="../../static/images/banner1.jpg"></image>
 			</swiper-item>
@@ -32,7 +33,7 @@
 		data() {
 			return {
 				// 当前所在滑块的index
-				"current": current
+				"current": 0
 			}
 		},
 		methods: {
