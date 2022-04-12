@@ -1,6 +1,6 @@
 <template>
 	<list-box :name="name" :word="word">
-		<swiper class="list-swiper" next-margin="30rpx">
+		<swiper class="list-swiper" next-margin="30rpx" :style="{height: `${200 * row}rpx`}">
 			<swiper-item v-for="(n, index) in column" :key="index">
 				<course-item v-for="(item, i) in courseData.slice(index * row, (index + 1) * row)" :key="i"
 					:item="item"></course-item>
@@ -44,11 +44,4 @@
 </script>
 
 <style lang="scss">
-	.list-swiper {
-		height: 800rpx;
-
-		.swiper-item {
-			background-color: red;
-		}
-	}
 </style>
