@@ -1,19 +1,21 @@
 <template>
-	<view class="course-item">
+	<view class="course-item":class="{column: isColumn}">
 		<view class="item-left">
-			<image class="course-img" src="/static/images/banner1.jpg" lazy-load=""></image>
+			<image class="course-img" :src="item.mainImage" lazy-load=""></image>
 			<view class="course-time">
-				12:12:12
+				{{item.totalTime}}
 			</view>
 		</view>
 		<view class="item-right column">
-			<view class="title">uni-app京剧戏曲节目斤斤计较军军军军军军军军军军</view>
+			<view class="title">{{item.title}}</view>
 			<view class="info">
-				<view class="nickname iconfont icon-laoshi2">屈想顺</view>
+				<view class="nickname iconfont icon-laoshi2">{{item.nickName}}</view>
 				<view class="count">
-					<!-- <view class="money">免费</view> -->
-					<view class="money iconfont icon-moneybag">199</view>
-					<view class="iconfont icon-video">100 人在学</view>
+					<view v-if="!item.isFree" class="money">免费</view>
+					<view v-else class="money iconfont icon-moneybag">
+						{{item.priceDiscount || item.priceOriginal}}
+					</view>
+					<view class="iconfont icon-video">{{item.studyTotal}} 人在学</view>
 				</view>
 			</view>
 		</view>
@@ -21,6 +23,29 @@
 </template>
 
 <script>
+	export default {
+		props: {
+			// 是否纵向排列图片和文字 （true 纵向，flase横向）
+			isColumn: {
+				type: Boolean,
+				default: false
+			},
+			item: {
+				type: Object,
+				default: () => ({
+					id: 1,
+					mainImage: '/static/images/banner2.jpg',
+					totalTime: '00:59:59',
+					title: 'uni-app京剧戏曲节目',
+					nickName: '屈想顺',
+					isFree: 0, // 是否收费 0免费 1收费
+					priceOriginal: 999, // 原价
+					priceDiscount: 599, // 优惠价
+					studyTotal: 999
+				})
+			}
+		}
+	}
 </script>
 
 <style lang="scss">
@@ -30,7 +55,7 @@
 		// flex-direction: column;
 		width: 100%;
 		padding: 20rpx 0;
-
+		border-bottom: 1rpx solid #F1F1F1;
 		.item-left {
 			position: relative;
 			width: 290rpx;
@@ -63,7 +88,7 @@
 			padding-top: 5rpx;
 			padding-left: 5rpx;
 			.title {
-				max-width: 290rpx;
+				max-width: 365rpx;
 				height: 70rpx;
 				line-height: 35rpx;
 				font-size: 28rpx;
@@ -84,6 +109,7 @@
 			.count {
 				display: flex;
 				align-items: center;
+				// border: 1px solid;
 				.iconfont {
 					font-size: 23rpx;
 					color: #222;
