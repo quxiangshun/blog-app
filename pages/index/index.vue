@@ -8,6 +8,10 @@
 		<jh-banner></jh-banner>
 		<!-- 分类区域 -->
 		<category-box></category-box>
+		<view class="list-container">
+			<!-- 热门推荐 -->
+			<swiper-course></swiper-course>
+		</view>
 	</view>
 </template>
 
@@ -15,11 +19,13 @@
 	import searchInput from '@/components/common/search-input.vue'
 	import jhBanner from '@/components/common/jh-banner.vue'
 	import categoryBox from './components/category-box.vue'
+	import swiperCourse from './components/swiper-course.vue'
 	export default {
 		components: {
 			searchInput,
 			jhBanner,
-			categoryBox
+			categoryBox,
+			swiperCourse
 		},
 		data() {
 			return {
@@ -73,7 +79,7 @@
 </script>
 
 <style>
-	page {
-		/* background-color: #000080; */
+	.list-container {
+		padding: 0 30rpx;
 	}
 </style>
