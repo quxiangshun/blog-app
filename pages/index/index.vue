@@ -10,7 +10,7 @@
 		<category-box></category-box>
 		<view class="list-container">
 			<!-- 热门推荐 -->
-			<swiper-course></swiper-course>
+			<swiper-course name="热门推荐" word="HOT"></swiper-course>
 		</view>
 	</view>
 </template>
