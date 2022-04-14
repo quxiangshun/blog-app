@@ -11,8 +11,9 @@
 		<view class="list-container">
 			<!-- 热门推荐 -->
 			<swiper-course name="热门推荐" word="HOT"></swiper-course>
-			<scroll-course name="近期上新" word="NEW"></scroll-course>
 			<swiper-course name="免费精选" word="FREE"></swiper-course>
+			<scroll-course name="近期上新" word="NEW"></scroll-course>
+			<list-course name="付费精品" word="NICE"></list-course>
 		</view>
 	</view>
 </template>
@@ -23,13 +24,15 @@
 	import categoryBox from './components/category-box.vue'
 	import swiperCourse from './components/swiper-course.vue'
 	import scrollCourse from './components/scroll-course.vue'
+	import listCourse from './components/list-course.vue'
 	export default {
 		components: {
 			searchInput,
 			jhBanner,
 			categoryBox,
 			swiperCourse,
-			scrollCourse
+			scrollCourse,
+			listCourse
 		},
 		data() {
 			return {
