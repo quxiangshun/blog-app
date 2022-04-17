@@ -44,7 +44,35 @@
 			this.updateSearchInputPlaceholderData()
 			// #endif
 		},
-
+		/**
+		 * 监听原生标题栏按钮点击事件，参数为Object
+		 * 
+		 * onlyFromCamera: 是否只能从相机扫码，不允许从相册选择图片，默认是false
+		 * scanType: ['barCode', 'qrCode', 'datamatrix', 'pdf417'] 一维码、二维码、DataMarix、pdf417
+		 */
+		onNavigationBarButtonTap(e) {
+			if(e.index === 0) {
+				// 打开扫一扫功能
+				uni.scanCode({
+					onlyFromCamera: false,
+					scanType: ['barCode', 'qrCode', 'datamatrix', 'pdf417'],
+					// 如果要在方法中使用this，则使用箭头函数
+					success: (res) => {
+						// console.log('条码类型：' + res.scanType)
+						// console.log('条码内容：' + res.result)
+						uni.navigateTo({
+							url: `/pages/public/web-view?url=${res.result}`
+						})
+					},
+					fail: (err) => {
+						uni.showToast({
+							title: '扫码失败',
+							icon: ''
+						})
+					}
+				})
+			}
+		},
 		methods: {
 			/* https://www.html5plus.org/doc/zh_cn/webview.html#plus.webview.WebviewStyles
 			setStyle({"titleNView": {"searchInput": {"placeholder": "java uniapp"}}}) 

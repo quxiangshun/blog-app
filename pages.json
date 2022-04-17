@@ -25,6 +25,7 @@
 							// 禁止输入，通过点击跳转到搜索页
 							"disabled": true
 						},
+						//  #ifdef APP-PLUS
 						"buttons": [{
 							// 此处用的是Unicode方式，此处路径必须放在static下
 							"fontSrc": "/static/icon/iconfont.ttf",
@@ -37,6 +38,7 @@
 							// 按钮全透明背景，结合"type":"transparent"使用
 							"background": "rgba(0, 0, 0,0)"
 						}],
+						// #endif
 						// 透明样式，顶部沉浸式显示(透明渐变)
 						"type":"transparent"
 					},
@@ -72,8 +74,22 @@
 				"enablePullDownRefresh": false
 			}
 
-		}
-	],
+		},
+		{
+			// web浏览器组件
+            "path" : "pages/public/web-view",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false,
+				"app-plus": {
+					// 禁止回弹效果
+					"bounce": "none"
+				}
+            }
+            
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
