@@ -49,18 +49,34 @@
 		// 如果要使用await，必须配置async
 		// async onLoad() {
 		onLoad() {
+			// uni.startPullDownRefresh()
 			// #ifdef APP-PLUS
 			this.updateSearchInputPlaceholderData()
 			// #endif
 			// const res = await request({url: '/article/api/advert/show/1'})
 			this.loadBannerData()
 			this.loadCategoryData()
-
+			
 			// 查询热门课程
 			this.loadHotCourseData()
 			this.loadFreeCourseData()
 			this.loadNewCourseData()
 			this.loadNiceCourseData()
+		},
+		onPullDownRefresh() {
+			// // #ifdef APP-PLUS
+			// this.updateSearchInputPlaceholderData()
+			// // #endif
+			// // const res = await request({url: '/article/api/advert/show/1'})
+			// this.loadBannerData()
+			// this.loadCategoryData()
+			
+			// // 查询热门课程
+			// this.loadHotCourseData()
+			// this.loadFreeCourseData()
+			// this.loadNewCourseData()
+			// this.loadNiceCourseData()
+			uni.stopPullDownRefresh()
 		},
 		/**
 		 * 监听原生标题栏按钮点击事件，参数为Object

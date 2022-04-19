@@ -6,8 +6,20 @@
 				// 导航区域的字体颜色
 				"navigationBarTextStyle":"white",
 				"navigationBarBackgroundColor":"#345DC2",
-				// "navigationBarTitleText": "天韵戏曲"
+				// 开启下拉刷新
+				// "enablePullDownRefresh": true,
+				// "backgroundTextStyle":"light",
+				"navigationBarTitleText": "天韵戏曲",
 				"app-plus": {
+					// 关闭回弹效果，style: default下拉刷新会冲突，
+					"bounce": "none",
+					// 原生下拉刷新
+					// "pullToRefresh": {
+					// 	"support": true,
+					// 	"color":"#007AFF",
+					// 	"style": "circle",
+					// 	"offset": "50px"
+					// },
 					// 自定义导航配置
 					"titleNView": {
 						"searchInput": {
@@ -41,9 +53,7 @@
 						// #endif
 						// 透明样式，顶部沉浸式显示(透明渐变)
 						"type":"transparent"
-					},
-					// 关闭回弹效果
-					"bounce": "none"
+					}
 				}
 			}
 		}, {
