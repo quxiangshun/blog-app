@@ -8,7 +8,7 @@ const BASE_URL = 'https://mock.mengxuegu.com/mock/625d531166abf914b1f1c07a/jh-ap
 
 // #ifdef H5
 // h5, 进行代理转发
-const BASE_URL = '/api' // 'http://39.108.187.100:6001'
+const BASE_URL = '/api'
 // #endif
 
 const request = (options = {}) => {
