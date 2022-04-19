@@ -5,15 +5,15 @@
 		<search-input></search-input>
 		<!-- #endif -->
 		<!-- 轮播图 -->
-		<jh-banner></jh-banner>
+		<jh-banner :bannerList="bannerList"></jh-banner>
 		<!-- 分类区域 -->
-		<category-box></category-box>
+		<category-box :categoryList="categoryList"></category-box>
 		<view class="list-container">
 			<!-- 热门推荐 -->
-			<swiper-course name="热门推荐" word="HOT"></swiper-course>
-			<swiper-course name="免费精选" word="FREE"></swiper-course>
-			<scroll-course name="近期上新" word="NEW"></scroll-course>
-			<list-course name="付费精品" word="NICE"></list-course>
+			<swiper-course name="热门推荐" word="HOT" :courseData="hotCourseList"></swiper-course>
+			<scroll-course name="近期上新" word="NEW" :courseData="newCourseList"></scroll-course>
+			<swiper-course name="免费精选" word="FREE" :courseData="freeCourseList"></swiper-course>
+			<list-course name="付费精品" word="NICE" :courseData="niceCourseList"></list-course>
 		</view>
 	</view>
 </template>
@@ -25,6 +25,7 @@
 	import swiperCourse from './components/swiper-course.vue'
 	import scrollCourse from './components/scroll-course.vue'
 	import listCourse from './components/list-course.vue'
+	import api from '@/api/course.js'
 	export default {
 		components: {
 			searchInput,
@@ -36,13 +37,30 @@
 		},
 		data() {
 			return {
-				title: ''
+				bannerList: [],
+				categoryList: [],
+				// 热门列表数据
+				hotCourseList: [],
+				freeCourseList: [],
+				newCourseList: [],
+				niceCourseList: [],
 			}
 		},
+		// 如果要使用await，必须配置async
+		// async onLoad() {
 		onLoad() {
 			// #ifdef APP-PLUS
 			this.updateSearchInputPlaceholderData()
 			// #endif
+			// const res = await request({url: '/article/api/advert/show/1'})
+			this.loadBannerData()
+			this.loadCategoryData()
+
+			// 查询热门课程
+			this.loadHotCourseData()
+			this.loadFreeCourseData()
+			this.loadNewCourseData()
+			this.loadNiceCourseData()
 		},
 		/**
 		 * 监听原生标题栏按钮点击事件，参数为Object
@@ -51,7 +69,7 @@
 		 * scanType: ['barCode', 'qrCode', 'datamatrix', 'pdf417'] 一维码、二维码、DataMarix、pdf417
 		 */
 		onNavigationBarButtonTap(e) {
-			if(e.index === 0) {
+			if (e.index === 0) {
 				// 打开扫一扫功能
 				uni.scanCode({
 					onlyFromCamera: false,
@@ -82,11 +100,11 @@
 			*/
 			updateSearchInputPlaceholderData() {
 				// 搜索框提示内容从搜索框中获取
-				let hot  = ['App ・ 微信小程序', 'Java ・ Springboot', 'SpringCloud ・ SpringSecurity', 'Vue ・ React']
+				let hot = ['App ・ 微信小程序', 'Java ・ Springboot', 'SpringCloud ・ SpringSecurity', 'Vue ・ React']
 				// 此对象相当于html5plus里的plus.webview.currentWebview()。在uni-app里vue页面直接使用plus.webview.currentWebview()无效
 				const currentWebview = this.$scope.$getAppWebview();
 				// 动态重设bounce效果
-				
+
 				let i = 0
 				// 一加载页面就会调用一次
 				currentWebview.setStyle({
@@ -108,7 +126,54 @@
 					});
 				}, 3000)
 			},
-			
+			// 查询轮播图数据
+			async loadBannerData() {
+				const {
+					data
+				} = await api.getAdvertList(1)
+				this.bannerList = data
+			},
+			// 查询分类数据
+			async loadCategoryData() {
+				const {
+					data
+				} = await api.getCategoryList();
+				this.categoryList = data
+			},
+			// 查询热门推荐数据
+			async loadHotCourseData() {
+				const {
+					data
+				} = await api.getList({
+					sort: 'hot'
+				}, 1, 8)
+				this.hotCourseList = data.records
+			},
+			async loadFreeCourseData() {
+				const {
+					data
+				} = await api.getList({
+					// 0收费 1免费
+					isFree: 1
+				}, 1, 8)
+				this.freeCourseList = data.records
+			},
+			async loadNewCourseData() {
+				const {
+					data
+				} = await api.getList({
+					sort: 'new'
+				})
+				this.newCourseList = data.records
+			},
+			async loadNiceCourseData() {
+				const {
+					data
+				} = await api.getList({
+					sort: 'nice'
+				})
+				this.niceCourseList = data.records
+			}
 		}
 	}
 </script>
