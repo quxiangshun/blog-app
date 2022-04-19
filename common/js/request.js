@@ -3,12 +3,12 @@ import { msg } from './util.js'
 // 基础URL
 // #ifndef H5
 // 非h5端，
-let BASE_URL = 'https://mock.mengxuegu.com/mock/625d531166abf914b1f1c07a/jh-app'
+const BASE_URL = 'https://mock.mengxuegu.com/mock/625d531166abf914b1f1c07a/jh-app'
 // #endif
 
 // #ifdef H5
 // h5, 进行代理转发
-let BASE_URL = '/api' // 'http://39.108.187.100:6001'
+const BASE_URL = '/api' // 'http://39.108.187.100:6001'
 // #endif
 
 const request = (options = {}) => {
