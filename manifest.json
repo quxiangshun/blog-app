@@ -68,5 +68,20 @@
     "uniStatistics" : {
         "enable" : false
     },
-    "vueVersion" : "2"
+    "vueVersion" : "2",
+	"h5": {
+		// 开发环境配置
+		"devServer": {
+			"proxy": {
+				"/api": {
+					// h5 配置代理
+					"target": "https://mock.mengxuegu.com/mock/625d531166abf914b1f1c07a/jh-app",
+					"pathRewrite": {
+						// 将请求地址 /api 替换为 ”“
+						"^/api": ""
+					}
+				}
+			}
+		}
+	}
 }
