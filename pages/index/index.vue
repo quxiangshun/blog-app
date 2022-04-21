@@ -1,8 +1,8 @@
 <template>
 	<view class="index-box">
 		<!-- #ifdef MP -->
-		<!-- 搜索框在小程序中显示 -->
-		<search-input></search-input>
+		<!-- 搜索框在小程序中显示 在组件上面添加click.native是使用原生的click-->
+		<search-input @click.native="navTo('/pages/search/search')"></search-input>
 		<!-- #endif -->
 		<!-- 轮播图 -->
 		<jh-banner :bannerList="bannerList"></jh-banner>
@@ -120,7 +120,7 @@
 					// },
 					onScroll: true // 是否监听滚动事件, 默认false, 仅mescroll-uni生效; mescroll-body直接声明onPageScroll (配置为true时,可@scroll="scroll"获取到滚动条位置和方向; 注意监听列表滚动是非常耗性能的,很容易出现卡顿,非特殊情况不要配置此项)
 				},
-				
+
 			}
 		},
 		// 如果要使用await，必须配置async
@@ -183,6 +183,14 @@
 					}
 				})
 			}
+		},
+		/**
+		 * 监听搜索框点击事件
+		 */
+		onNavigationBarSearchInputClicked() {
+			// console.log('点击原生搜索框')
+			// 通过封装的混合文件，跳转到搜索页
+			this.navTo('/pages/search/search')
 		},
 		methods: {
 			/* https://www.html5plus.org/doc/zh_cn/webview.html#plus.webview.WebviewStyles
@@ -277,26 +285,26 @@
 				let pageNum = page.num
 				let pageSize = page.size
 				console.log("上拉加载的回调", page)
-				
+
 				// 如果是第一页，则下拉刷新
-				if(page.num === 1) {
+				if (page.num === 1) {
 					this.loadBannerData()
 					this.loadCategoryData()
-					
+
 					// 查询热门课程
 					this.loadHotCourseData()
 					this.loadFreeCourseData()
 					this.loadNewCourseData()
 				}
-				
-				
+
+
 				// this.loadNiceCourseData()
-				
+
 				// mixin默认延时500自动结束加载
 				// setTimeout(()=>{
 				// 	this.mescroll.endErr();
 				// }, 500)
-				
+
 				const {
 					data
 				} = await api.getList({
@@ -304,14 +312,14 @@
 					isFree: 0
 				}, page.num, page.size)
 				this.niceCourseList = data.records
-				
+
 				const currentList = data.records
-				
+
 				// 判断是否是第一页，是则将原数据清空
-				if(page.num === 1) this.niceCourseList = []
+				if (page.num === 1) this.niceCourseList = []
 				//追加数据
 				this.niceCourseList = this.niceCourseList.concat(currentList)
-				
+
 				// 请求成功，隐藏加载状态
 				//联网成功的回调,隐藏下拉刷新和上拉加载的状态;
 				this.mescroll.endBySize(currentList.length, data.total);

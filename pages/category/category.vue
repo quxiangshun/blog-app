@@ -28,6 +28,16 @@
 		mounted() {
 			this.loadCategoryData()
 		},
+		/**
+		 * 监听搜索框点击事件（监听原生导航按钮）
+		 */
+		onNavigationBarButtonTap(e) {
+			// console.log('点击原生搜索框')
+			if (e.index === 0) {
+				// 通过封装的混合文件，跳转到搜索页
+				this.navTo('/pages/search/search')
+			}
+		},
 		methods: {
 			// 查询分类数据
 			async loadCategoryData() {
@@ -50,7 +60,7 @@
 			},
 			// 点击标签到搜索页
 			clickLabel(item) {
-				
+
 			}
 		}
 	}
