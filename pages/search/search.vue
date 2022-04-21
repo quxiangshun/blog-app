@@ -11,6 +11,10 @@
 				
 			}
 		},
+		onLoad(option) {
+			// 接收参数
+			console.log('option', JSON.parse(option.params))
+		},
 		methods: {
 			
 		}

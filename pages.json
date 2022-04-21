@@ -119,7 +119,27 @@
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
+				"app-plus": {
+					"bounce":"none",
+					"titleNView": {
+						// 隐藏左侧返回按钮（APP）
+						"autoBackButton": false,
+						"searchInput": {
+							"align": "left",
+							"placeholder":"搜索你想要的内容",
+							"borderRadius":"30rpx",
+							"backgroundColor":"#F0F1F2"
+						},
+						"buttons": [
+							{
+								"float":"right",
+								"text":"取消",
+								"fontSize":16,
+								"color":"#2A333B"
+							}
+						]
+					}
+				}
             }
             
         }

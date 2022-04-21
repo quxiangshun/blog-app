@@ -9,7 +9,7 @@
 		</scroll-view>
 		<scroll-view class="right" scroll-y="true">
 			<view class="tag">
-				<view v-for="(item, index) in labelList" @click="clickLabel(item)">{{item.name}}</view>
+				<view v-for="(item, index) in labelList" @click.stop="clickLabel(item)">{{item.name}}</view>
 			</view>
 		</scroll-view>
 	</view>
@@ -60,7 +60,9 @@
 			},
 			// 点击标签到搜索页
 			clickLabel(item) {
-
+				// 注意： labelId一定要放在第一个位置，后面解析时需要使用，顺序不要乱
+				const params = {labelId: item.id, name: item.name, activeIndex: this.activeIndex}
+				this.navTo(`/pages/search/search?params=${JSON.stringify(params)}`)
 			}
 		}
 	}
