@@ -7,7 +7,6 @@
 <script>
 	import listBox from './list-box.vue'
 	import courseItem from '@/components/common/course-item.vue'
-	import courseData from '@/mock/courseData.js'
 	export default {
 		components: {
 			listBox,
@@ -24,7 +23,7 @@
 			},
 			courseData: {
 				type: Array,
-				default: () => courseData
+				default: () => []
 			}
 		}
 	}

@@ -6,13 +6,14 @@
 				// 导航区域的字体颜色
 				"navigationBarTextStyle":"white",
 				"navigationBarBackgroundColor":"#345DC2",
+				"disableScroll": false,
 				// 开启下拉刷新
-				// "enablePullDownRefresh": true,
+				"enablePullDownRefresh": false,
 				// "backgroundTextStyle":"light",
 				"navigationBarTitleText": "天韵戏曲",
 				"app-plus": {
 					// 关闭回弹效果，style: default下拉刷新会冲突，
-					"bounce": "none",
+					// "bounce": "none",
 					// 原生下拉刷新
 					// "pullToRefresh": {
 					// 	"support": true,

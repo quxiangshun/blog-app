@@ -4,6 +4,9 @@ import App from './App'
 import Vue from 'vue'
 Vue.config.productionTip = false
 
+import MescrollBody from "@/uni_modules/mescroll-uni/components/mescroll-diy/beibei/mescroll-body.vue";
+Vue.component('mescroll-body', MescrollBody)
+
 // 全局引入混合文件
 import mixin from 'common/mixin/mixin.js'
 Vue.mixin(mixin)

@@ -16,7 +16,6 @@
 </template>
 
 <script>
-	import courseData from '@/mock/courseData.js'
 	export default {
 		props: {
 			name: {
