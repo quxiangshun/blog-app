@@ -10,7 +10,8 @@
 	export default {
 		data() {
 			return {
-				params: null
+				params: null, // 其他页面传递过来的参数
+				content: null, // 搜索内容
 			}
 		},
 		onLoad(option) {
@@ -31,6 +32,31 @@
 				webView.setTitleNViewSearchInputFocus(true)
 				// #endif 
 			}
+		},
+		// 取消按钮，点击事件
+		onNavigationBarButtonTap(e) {
+			// 此处不需要判断index，因为只有一个按钮，如果有多个按钮通过index判断
+			this.navBack()
+		},
+		/**
+		 * 监听原生标题栏搜索输入框输入内容变化事件
+		 * 
+		 * @param {Object} e e.text获取输入框输入的内容
+		 */
+		onNavigationBarSearchInputChanged(e) {
+			this.content = e.text
+		},
+		/**
+		 * 用户点击软键盘上的搜索按钮时触发
+		 * 
+		 * @param {Object} e e.text获取输入框输入的内容
+		 */
+		onNavigationBarSearchInputConfirmed(e) {
+			// #ifdef APP-PLUS
+			// 失去焦点
+			webView.setTitleNViewSearchInputFocus(false)
+			// #endif 
+			this.doSearch()
 		},
 		methods: {
 			doSearch() {
