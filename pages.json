@@ -60,8 +60,22 @@
 		}, {
 			"path": "pages/category/category",
 			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
+				"navigationBarTitleText": "分类",
+				"navigationBarBackgroundColor":"#345DC2",
+				"navigationBarTextStyle":"white",
+				"app-plus": {
+					"bounce":"none",
+					"titleNView": {
+						"buttons": [
+							{
+								"color": "#FFFFFF",
+								"fontSize": "18",
+								"fontSrc": "/static/icon/iconfont.ttf",
+								"text": "\ue608"
+							}
+						]
+					}
+				}
 			}
 
 		}, {
@@ -106,5 +120,47 @@
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"list": [{
+				"pagePath": "pages/index/index",
+				"text": "首页",
+				"iconPath": "/static/tab/index.png",
+				"selectedIconPath": "static/tab/index-active.png"
+			},
+			{
+				"pagePath": "pages/category/category",
+				"text": "分类",
+				"iconPath": "/static/tab/category.png",
+				"selectedIconPath": "/static/tab/category-active.png"
+			},
+			{
+				"pagePath":"pages/article/article",
+				"text":"阅读",
+				"iconPath":"/static/tab/article.png",
+				"selectedIconPath":"/static/tab/article-active.png"
+			},
+			{
+				"pagePath":"pages/question/question",
+				"text":"问答",
+				"iconPath":"/static/tab/question.png",
+				"selectedIconPath":"/static/tab/question-active.png"
+			},
+			{
+				"pagePath": "pages/my/my",
+				"text": "我的",
+				"iconPath": "/static/tab/my.png",
+				"selectedIconPath": "/static/tab/my-active.png"
+
+			}
+		],
+		// tab 上的文字默认颜色
+		// "color": "#795DA3",
+		// tab 上的文字选中时的颜色
+		"selectedColor": "#007AFF",
+		// tab 的背景色
+		// "backgroundColor": "#669900",
+		// tabbar 上边框的颜色，可选值 black/white
+		"borderStyle": "black"
 	}
 }
