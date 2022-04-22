@@ -81,6 +81,10 @@
 			 * @param {Object} item 分类信息
 			 */
 			getLabelList(index, item) {
+				if(item && item.name === '全部分类') {
+					this.searchPageChangeLabel(item)
+					return
+				}
 				// 选中样式
 				this.activeIndex = index
 				// 通过item获取标签
@@ -88,6 +92,11 @@
 			},
 			// 点击标签到搜索页
 			clickLabel(item) {
+				if (this.value) {
+					// 将点击的标签信息回显到搜索页（下拉筛选）进行搜索
+					this.searchPageChangeLabel(item)
+					return
+				}
 				// 注意： labelId一定要放在第一个位置，后面解析时需要使用，顺序不要乱
 				const params = {
 					labelId: item.id,
@@ -95,6 +104,26 @@
 					activeIndex: this.activeIndex
 				}
 				this.navTo(`/pages/search/search?params=${JSON.stringify(params)}`)
+			},
+			/**
+			 * 搜索页面弹窗选择标签
+			 * @param {Object} item 标签信息
+			 */
+			searchPageChangeLabel(item) {
+				// 判断用来避免重复点击
+				// this.value.name上次名称(分类、标签)，item.name是点击的名称，item.name是分类名称
+				if(this.value.name !== item.name && this.value.name !== item.cname) {
+					// 如果父组件传递的是对象，则可以直接修改值
+					// 如果有cname则是选择的‘不限’标签，否则是具体的标签名
+					this.value.name = item.cname || item.name
+					// 标签ID
+					this.value.id = item.id || null
+					// 分类ID（点击是‘不限’，就取分类ID）
+					this.value.categoryId = item.categoryId || null
+					this.$emit('searchByLabel', this.value)
+				}
+				// 关闭搜索页面的弹窗
+				this.value.active = false
 			}
 		}
 	}

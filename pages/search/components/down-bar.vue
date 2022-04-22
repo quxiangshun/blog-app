@@ -2,7 +2,7 @@
 	<!-- @touchmove.stop.prevent="()=>{}"防止抖动 -->
 	<view class="down-bar row sticky-box" @touchmove.stop.prevent="()=>{}">
 		<view class="one" v-for="(item, index) in downBarList" :key="index" @click="clickDownView(item)">
-			<view class="center" :class="{active: item.active || item.id || item.id === 0}">
+			<view class="center" :class="{active: item.active || item.id || item.id === 0 || item.categoryId}">
 				<text>{{item.name}}</text>
 				<text class="iconfont icon-down1" v-show="!item.active"></text>
 				<text class="iconfont icon-up" v-show="item.active"></text>
@@ -117,10 +117,10 @@
 			},
 			/**
 			 * 分类子组件触发此放啊，来查询对应分类或标签数据
-			 * @param {Object} label 标签的信息
+			 * @param {Object} label 标签的信息或者分类信息
 			 */
 			searchByLabel(label) {
-				
+				this.$emit('search', {labelId: labelId, categoryId: label.categoryId})
 			}
 		}
 	}
