@@ -7,13 +7,18 @@
 			@cancel="navBack(1)" @input="input">
 		</uni-search-bar>
 		<!-- #endif -->
+		<keyword></keyword>
 	</view>
 </template>
 
 <script>
+	import keyword from './components/keyword.vue'
 	// 页面实例
 	let webView = null;
 	export default {
+		components: {
+			keyword
+		},
 		data() {
 			return {
 				params: null, // 其他页面传递过来的参数
