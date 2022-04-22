@@ -9,7 +9,7 @@
 			</view>
 			<view class="item-list" v-show="item.active">
 
-				<category class="category" v-if="item.isCategory"></category>
+				<category class="category" v-if="item.isCategory" :value="item" @searchByLabel="searchByLabel"></category>
 				<view class="name" :class="{active: info.name === item.name}" v-else v-for="(info, i) in item.list"
 					:key="i" @click="changeInfo(item, info)">{{info.name}}</view>
 			</view>
@@ -114,6 +114,13 @@
 				
 				// 查询数据(如果哪个页面引用该组件，则绑定一个search事件)
 				this.$emit('search', {[item.type]: info.id})
+			},
+			/**
+			 * 分类子组件触发此放啊，来查询对应分类或标签数据
+			 * @param {Object} label 标签的信息
+			 */
+			searchByLabel(label) {
+				
 			}
 		}
 	}

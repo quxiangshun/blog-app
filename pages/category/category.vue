@@ -18,6 +18,13 @@
 <script>
 	import api from '@/api/course.js'
 	export default {
+		props: {
+			// 搜索页将当前组件作为子组件，传递了对应标题处的对象
+			value: {
+				type: Object,
+				default: () => {}
+			}
+		},
 		data() {
 			return {
 				categoryList: [],
@@ -45,6 +52,27 @@
 					data
 				} = await api.getCategoryList();
 				this.categoryList = data
+
+				// 如果value有值，则是搜索页传递的数据
+				if (this.value) {
+					this.categoryList.forEach(item => {
+						// 在每个分类中第一个位置添加‘不限’标签
+						// id: 标签ID；name: 标签名称；
+						// cname: 分类名称用于在标题中显示；categoryId：分类ID用于作为条件查询
+						item.labelList.unshift({
+							id: null,
+							name: '不限',
+							cname: item.name,
+							categoryId: item.id
+						})
+					})
+					this.categoryList.unshift({
+						id: null,
+						name: '全部分类'
+					})
+					// 弹出分类窗口，回显上次点击所在分类处（颜色是蓝色）
+					this.activeIndex = this.value.activeIndex > -1 ? this.value.activeIndex + 1 : this.activeIndex
+				}
 				// 获取当前选中的分类
 				this.getLabelList(this.activeIndex, this.categoryList[0])
 			},
@@ -61,7 +89,11 @@
 			// 点击标签到搜索页
 			clickLabel(item) {
 				// 注意： labelId一定要放在第一个位置，后面解析时需要使用，顺序不要乱
-				const params = {labelId: item.id, name: item.name, activeIndex: this.activeIndex}
+				const params = {
+					labelId: item.id,
+					name: item.name,
+					activeIndex: this.activeIndex
+				}
 				this.navTo(`/pages/search/search?params=${JSON.stringify(params)}`)
 			}
 		}
