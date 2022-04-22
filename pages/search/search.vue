@@ -16,18 +16,25 @@
 		 传递给子组件的绑定不能写:value="tabIndex"，这个是单向绑定，
 		 如果实现双向绑定必须写v-model="tabIndex" -->
 		<tab-bar v-if="searched" v-model="tabIndex"></tab-bar>
+		
+		<down-bar v-if="searched"></down-bar>
+		
+		<view v-if="searched" v-for="i in 100" :key="i">{{i}}</view>
 	</view>
 </template>
 
 <script>
 	import keyword from './components/keyword.vue'
+	import downBar from './components/down-bar.vue'
 	import tabBar from '@/components/common/tab-bar.vue'
+	
 	// 页面实例
 	let webView = null;
 	export default {
 		components: {
 			keyword,
-			tabBar
+			tabBar,
+			downBar
 		},
 		data() {
 			return {
