@@ -1,7 +1,7 @@
 <template>
 	<!-- @touchmove.stop.prevent="()=>{}"防止抖动 -->
 	<view class="down-bar row sticky-box" @touchmove.stop.prevent="()=>{}">
-		<view class="one" v-for="(item, index) in downBars" :key="index" @click="clickDownView(item)">
+		<view class="one" v-for="(item, index) in downBarList" :key="index" @click="clickDownView(item)">
 			<view class="center" :class="{active: item.active || item.id || item.id === 0}">
 				<text>{{item.name}}</text>
 				<text class="iconfont icon-down1" v-show="!item.active"></text>
@@ -56,11 +56,20 @@
 				]
 			}
 		},
+		data() {
+			return {
+				// 将父组件传递的数据赋值给此属性，方便后面修改。直接修改downBars小程序不生效
+				downBarList: []
+			}
+		},
+		created() {
+			this.downBarList = this.downBars
+		},
 		methods: {
 			// 点击弹出
 			clickDownView(item) {
 				// 显示或隐藏弹窗
-				this.downBars.forEach(b => {
+				this.downBarList.forEach(b => {
 					// 将点击的这个显示或隐藏，其他全部隐藏
 					b.active = item === b ? !item.active : false
 				})
