@@ -27,6 +27,10 @@
 			category
 		},
 		props: {
+			params: { // 其他页面跳转到搜索页所带的请求参数，用于回显标题处
+				type: Object,
+				default: null
+			},
 			downBars: { // 下拉筛选相关内容
 				type: Array,
 				default: () => [{
@@ -49,11 +53,32 @@
 					},
 					{
 						type: 'label',
-						name: '全部分类',
+						name: '全部分类', // 约束：全部分类放在最后一个元素
 						active: false,
 						isCategory: true
 					}
 				]
+			}
+		},
+		watch: {
+			params: {
+				immediate: true,
+				handler(newVal) {
+					// console.log('请求参数', newVal)
+					// 分类页面点击标签跳转过来的
+					// activeIndex: 0
+					// labelId: 10
+					// name: "hbskgpls"
+					if(newVal && newVal.name) {
+						// 将标签信息回显到全部分类处的标题处
+						const obj = this.downBars[this.downBars.length - 1];
+						obj.name = newVal.name
+						obj.id = newVal.labelId
+						// 为了弹窗后，显示当前标签所属分类
+						obj.activeIndex = newVal.activeIndex
+						return
+					}
+				}
 			}
 		},
 		data() {

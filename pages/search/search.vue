@@ -17,7 +17,7 @@
 		 如果实现双向绑定必须写v-model="tabIndex" -->
 		<tab-bar v-if="searched" v-model="tabIndex"></tab-bar>
 		
-		<down-bar v-if="searched"></down-bar>
+		<down-bar v-if="searched" :params="params"></down-bar>
 		
 		<view v-if="searched" v-for="i in 100" :key="i">{{i}}</view>
 	</view>
