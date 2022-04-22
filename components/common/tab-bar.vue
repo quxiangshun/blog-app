@@ -1,5 +1,6 @@
 <template>
-	<view class="tab-bar">
+	<!-- @touchmove.stop.prevent="()=>{}"防止抖动 -->
+	<view class="tab-bar" @touchmove.stop.prevent="()=>{}">
 		<view class="bar-view center">
 			<view class="bar-item" :class="{active: index === value}" v-for="(item, index) in tabs" :key="index"
 				@click="changeTab(index)">
