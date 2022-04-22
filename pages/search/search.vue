@@ -1,6 +1,12 @@
 <template>
 	<view>
-		搜索
+
+		<!-- #ifdef MP -->
+		<!-- navBack()小括号一定要添加，不添加的话会添加event方法，会添加一个对象，写了小括号表示没有参数 -->
+		<uni-search-bar radius="100" placeholder="搜索你想要的内容" @confirm="doSearch" :focus="true" v-model="content"
+			@cancel="navBack(1)">
+		</uni-search-bar>
+		<!-- #endif -->
 	</view>
 </template>
 
@@ -19,9 +25,9 @@
 			// 获取当前页面实例
 			webView = this.$scope.$getAppWebview();
 			// #endif 
-			
+
 			// 如果有参数，不自动获取焦点，没有参数，自动获取焦点
-			if(option.params) {
+			if (option.params) {
 				// 接收参数
 				// console.log('option', JSON.parse(option.params))
 				this.params = JSON.parse(option.params)
@@ -61,7 +67,7 @@
 		methods: {
 			doSearch() {
 				uni.showLoading()
-			}
+			},
 		}
 	}
 </script>
