@@ -3,8 +3,8 @@
 
 		<!-- #ifdef MP -->
 		<!-- navBack()小括号一定要添加，不添加的话会添加event方法，会添加一个对象，写了小括号表示没有参数 -->
-		<uni-search-bar radius="100" placeholder="搜索你想要的内容" @confirm="doSearch" :focus="true" v-model="content"
-			@cancel="navBack(1)">
+		<uni-search-bar radius="100" placeholder="搜索你想要的内容" @confirm="doSearch" :focus="mpFocus" v-model="content"
+			@cancel="navBack(1)" @input="input">
 		</uni-search-bar>
 		<!-- #endif -->
 	</view>
@@ -18,6 +18,9 @@
 			return {
 				params: null, // 其他页面传递过来的参数
 				content: null, // 搜索内容
+				// #ifdef MP
+				mpFocus: false, // 小程序自动获取焦点，默认false不获取焦点
+				// #endif
 			}
 		},
 		onLoad(option) {
@@ -37,6 +40,9 @@
 				// 获取焦点
 				webView.setTitleNViewSearchInputFocus(true)
 				// #endif 
+				// #ifdef MP
+				this.mpFocus = true
+				// #endif
 			}
 		},
 		// 取消按钮，点击事件
@@ -66,8 +72,17 @@
 		},
 		methods: {
 			doSearch() {
+				// #ifdef MP
+				this.mpFocus = false
+				// #endif
+				// console.log(this.content)
 				uni.showLoading()
 			},
+			// #ifdef MP
+			input(res) {
+				this.content = res
+			}
+			// #endif
 		}
 	}
 </script>
