@@ -7,17 +7,27 @@
 			@cancel="navBack(1)">
 		</uni-search-bar>
 		<!-- #endif -->
+
+		<!-- 搜索关键字组件 -->
 		<keyword v-if="!searched" @doSearch="doSearch"></keyword>
+
+		<!-- 标签导航 -->
+		<!-- （1. props声明value；2. 修改它时触发input事件传递）
+		 传递给子组件的绑定不能写:value="tabIndex"，这个是单向绑定，
+		 如果实现双向绑定必须写v-model="tabIndex" -->
+		<tab-bar v-if="searched" v-model="tabIndex"></tab-bar>
 	</view>
 </template>
 
 <script>
 	import keyword from './components/keyword.vue'
+	import tabBar from '@/components/common/tab-bar.vue'
 	// 页面实例
 	let webView = null;
 	export default {
 		components: {
-			keyword
+			keyword,
+			tabBar
 		},
 		data() {
 			return {
@@ -26,7 +36,8 @@
 				// #ifdef MP
 				mpFocus: false, // 小程序自动获取焦点，默认false不获取焦点
 				// #endif
-				searched: false,
+				searched: false, // 是否搜索过，将keyword隐藏
+				tabIndex: 0, // 当前所在标签下标
 			}
 		},
 		onLoad(option) {
@@ -89,7 +100,7 @@
 
 				// 将当前搜索关键字保存到本地缓存
 				this.storageHistory()
-				uni.showLoading()
+				// uni.showLoading()
 			},
 			storageHistory() {
 				// 历史搜索保存到本地的key
