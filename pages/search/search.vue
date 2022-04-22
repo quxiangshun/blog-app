@@ -7,7 +7,7 @@
 			@cancel="navBack(1)">
 		</uni-search-bar>
 		<!-- #endif -->
-		<keyword @doSearch="doSearch"></keyword>
+		<keyword v-if="!searched" @doSearch="doSearch"></keyword>
 	</view>
 </template>
 
@@ -26,6 +26,7 @@
 				// #ifdef MP
 				mpFocus: false, // 小程序自动获取焦点，默认false不获取焦点
 				// #endif
+				searched: false,
 			}
 		},
 		onLoad(option) {
@@ -82,7 +83,35 @@
 				// #endif
 				this.content = obj && obj.value ? obj.value : this.content
 				// console.log(this.content)
+
+				// 搜索过，隐藏关键字keyword.vue组件
+				this.searched = true
+
+				// 将当前搜索关键字保存到本地缓存
+				this.storageHistory()
 				uni.showLoading()
+			},
+			storageHistory() {
+				// 历史搜索保存到本地的key
+				const key = 'history_list'
+				// 获取当前本地已经存在的记录
+				uni.getStorage({
+					key,
+					// 写箭头函数，不然里面用不了this
+					success: (res) => {
+						// console.log('原历史关键字', res.data)
+						// 查询到的原历史关键数组，判断数组中是否存在当前关键字
+						// 不存在则添加到数组中第一个元素(res.data.unshift()追加到第一个元素)，存在不添加
+						this.content && res.data.indexOf(this.content) < 0 && res.data.unshift(this.content)
+						// 保存到本地缓存
+						uni.setStorageSync(key, res.data)
+					},
+					fail: (err) => {
+						// console.log('获取历史关键字失败', err)
+						// 如果没有保存过，则会失败，即进行第一次保存。保存的值不要少了[]，值是一个数组
+						this.content && uni.setStorageSync(key, [this.content])
+					}
+				})
 			}
 		}
 	}
