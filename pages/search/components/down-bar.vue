@@ -120,8 +120,8 @@
 			 * @param {Object} label 标签的信息或者分类信息
 			 */
 			searchByLabel(label) {
-				console.log('down-bar page in search page',label)
-				this.$emit('search', {labelId: labelId, categoryId: label.categoryId})
+				// console.log('down-bar page in search page',label)
+				this.$emit('search', {labelId: label.id, categoryId: label.categoryId})
 			}
 		}
 	}

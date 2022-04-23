@@ -9,7 +9,7 @@
 			<!-- 数据列表 -->
 			<!-- <view v-for="i in 100" :key="i">{{i}}</view> -->
 			<view style="padding: 0 30rpx;">
-				<course-item></course-item>
+				<course-item v-for="(item, index) in list" :key="index" :item="item"></course-item>
 			</view>
 		</mescroll-body>
 	</view>
@@ -21,6 +21,7 @@
 	import downBar from './down-bar.vue'
 	import downBars from '@/config/course-down-bar.js'
 	import courseItem from '@/components/common/course-item.vue'
+	import api from '@/api/course.js'
 	export default {
 		mixins: [MescrollMixin, MescrollMoreItemMixin], // 注意此处还需使用MescrollMoreItemMixin (必须写在MescrollMixin后面)
 		components: {
@@ -55,6 +56,7 @@
 					categoryId: null, // 分类ID
 					
 				},
+				list: [],
 				downOption: {
 					auto: false // 不自动加载 (mixin已处理第一个tab触发downCallback)
 				},
@@ -78,7 +80,7 @@
 			this.params && Object.keys(this.searchData).forEach(key => {
 				this.searchData[key] = this.params[key] || null
 			})
-			console.log('mounted合并的searchData', this.searchData)
+			// console.log('mounted合并的searchData', this.searchData)
 		},
 		methods: {
 			/**
@@ -86,7 +88,7 @@
 			 * @param {Object} data
 			 */
 			search(data) {
-				console.log('数据:::', data, this.content, this.params)
+				// console.log('数据:::', data, this.content, this.params)
 				// 合并关键字内容，去掉左右空格
 				this.searchData.content = this.content && this.content.trim()
 				// 对象拷贝，合并数据，data中的属性会合并到this.searchData对象属性值上
@@ -97,10 +99,21 @@
 				this.mescroll.resetUpScroll()
 			},
 			// 上拉加载的回调
-			upCallback(page) {
-				console.log('课程列表upCallback', page, this.content, this.params)
-				// mixin默认延时500自动结束加载
-				this.mescroll.endSuccess(0)
+			async upCallback(page) {
+				// console.log('课程列表upCallback', page, this.searchData)
+				// 根据分页条件查询列表数据
+				const {data} = await api.getList(this.searchData, page.num, page.size)
+				// 注意是声明的常量list
+				const list = data.records
+				if(page.num === 1) {
+					this.list = []
+					// 回到顶部（距离顶部的位置,时长毫秒数）
+					this.mescroll.scrollTo(0, 0)
+				}
+				this.list = this.list.concat(list)
+				
+				// 请求成功，隐藏加载装填
+				this.mescroll.endBySize(list.length, data.total)
 			},
 			//点击空布局按钮的回调
 			emptyClick() {
