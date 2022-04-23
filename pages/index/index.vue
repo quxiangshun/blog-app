@@ -284,7 +284,7 @@
 			async upCallback(page) {
 				let pageNum = page.num
 				let pageSize = page.size
-				console.log("上拉加载的回调", page)
+				// console.log("上拉加载的回调", page)
 
 				// 如果是第一页，则下拉刷新
 				if (page.num === 1) {

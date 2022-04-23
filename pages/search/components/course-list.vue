@@ -8,6 +8,9 @@
 			:up="upOption" @up="upCallback" @emptyclick="emptyClick">
 			<!-- 数据列表 -->
 			<!-- <view v-for="i in 100" :key="i">{{i}}</view> -->
+			<view style="padding: 0 30rpx;">
+				<course-item></course-item>
+			</view>
 		</mescroll-body>
 	</view>
 </template>
@@ -17,10 +20,12 @@
 	import MescrollMoreItemMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mixins/mescroll-more-item.js";
 	import downBar from './down-bar.vue'
 	import downBars from '@/config/course-down-bar.js'
+	import courseItem from '@/components/common/course-item.vue'
 	export default {
 		mixins: [MescrollMixin, MescrollMoreItemMixin], // 注意此处还需使用MescrollMoreItemMixin (必须写在MescrollMixin后面)
 		components: {
-			downBar
+			downBar,
+			courseItem
 		},
 		props: {
 			i: Number, // 每个tab页的专属下标 (除了支付宝小程序必须在这里定义, 其他平台都可不用写, 因为已在MescrollMoreItemMixin定义)
@@ -42,22 +47,38 @@
 		data() {
 			return {
 				downBars: downBars(), //注意此处是调用方法，不要少了()
-				downOption:{
-					auto:false // 不自动加载 (mixin已处理第一个tab触发downCallback)
+				searchData: {
+					content: null, //关键字内容
+					sort: null, // 排序（new/hot）
+					isFree: null, // 0付费，1免费
+					labelId: null, // 标签ID
+					categoryId: null, // 分类ID
+					
 				},
-				upOption:{
-					auto:false, // 不自动加载
+				downOption: {
+					auto: false // 不自动加载 (mixin已处理第一个tab触发downCallback)
+				},
+				upOption: {
+					auto: false, // 不自动加载
 					page: {
 						num: 0, // 当前页码,默认0,回调之前会加1,即callback(page)会从1开始
 						size: 10 // 每页数据的数量
 					},
 					noMoreSize: 4, //如果列表已无数据,可设置列表的总数量要大于半页才显示无更多数据;避免列表数据过少(比如只有一条数据),显示无更多数据会不好看; 默认5
-					empty:{
+					empty: {
 						tip: '~ 空空如也 ~', // 提示
 						btnText: '去看看'
 					}
 				}
 			}
+		},
+		mounted() {
+			// 如果有其他页面带的请求参数，则获取对应的请求参数值，将参数与this.searchData合并
+			// Object.keys返回对象中所有的key名称，返回值数组
+			this.params && Object.keys(this.searchData).forEach(key => {
+				this.searchData[key] = this.params[key] || null
+			})
+			console.log('mounted合并的searchData', this.searchData)
 		},
 		methods: {
 			/**
@@ -66,6 +87,13 @@
 			 */
 			search(data) {
 				console.log('数据:::', data, this.content, this.params)
+				// 合并关键字内容，去掉左右空格
+				this.searchData.content = this.content && this.content.trim()
+				// 对象拷贝，合并数据，data中的属性会合并到this.searchData对象属性值上
+				Object.assign(this.searchData, data)
+				
+				// console.log('合并后数据:::', this.searchData)
+				// 内容将page.name=1，在upCallback
 				this.mescroll.resetUpScroll()
 			},
 			// 上拉加载的回调
@@ -75,9 +103,9 @@
 				this.mescroll.endSuccess(0)
 			},
 			//点击空布局按钮的回调
-			emptyClick(){
+			emptyClick() {
 				uni.showToast({
-					title:'点击了按钮,具体逻辑自行实现'
+					title: '点击了按钮,具体逻辑自行实现'
 				})
 			}
 		}
