@@ -1,7 +1,7 @@
 <template>
 	<!-- 不能用v-if (i: 每个tab页的专属下标;  index: 当前tab的下标; 申明在 MescrollMoreItemMixin )-->
 	<view v-show="i === index">
-		<down-bar :params="params" @search="search"></down-bar>
+		<down-bar :params="params" @search="search" :downBars="downBars"></down-bar>
 		<!-- top="120"下拉布局往下偏移,防止被悬浮菜单遮住 -->
 		<!-- ref动态生成: 字节跳动小程序编辑器不支持一个页面存在相同的ref (如不考虑字节跳动小程序可固定值为 ref="mescrollRef") -->
 		<mescroll-body :ref="'mescrollRef'+i" @init="mescrollInit" :down="downOption" @down="downCallback"
@@ -16,6 +16,7 @@
 	import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 	import MescrollMoreItemMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mixins/mescroll-more-item.js";
 	import downBar from './down-bar.vue'
+	import downBars from '@/config/course-down-bar.js'
 	export default {
 		mixins: [MescrollMixin, MescrollMoreItemMixin], // 注意此处还需使用MescrollMoreItemMixin (必须写在MescrollMixin后面)
 		components: {
@@ -40,6 +41,7 @@
 		},
 		data() {
 			return {
+				downBars: downBars(), //注意此处是调用方法，不要少了()
 				downOption:{
 					auto:false // 不自动加载 (mixin已处理第一个tab触发downCallback)
 				},
