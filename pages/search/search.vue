@@ -17,7 +17,14 @@
 		 如果实现双向绑定必须写v-model="tabIndex" -->
 		<tab-bar v-if="searched" v-model="tabIndex"></tab-bar>
 		
-		<down-bar v-if="searched" :params="params"></down-bar>
+		<!-- <down-bar v-if="searched" :params="params"></down-bar> -->
+		
+		<!-- 标签体内容 -->
+		<block v-if="searched">
+			<course-list v-show="tabIndex === 0" :params="params" :content="content"></course-list>
+			<article-list v-show="tabIndex === 1" :params="params" :content="content"></article-list>
+			<question-list v-show="tabIndex === 2" :params="params" :content="content"></question-list>
+		</block>
 		
 		<view v-if="searched" v-for="i in 100" :key="i">{{i}}</view>
 	</view>
@@ -25,7 +32,10 @@
 
 <script>
 	import keyword from './components/keyword.vue'
-	import downBar from './components/down-bar.vue'
+	// import downBar from './components/down-bar.vue'
+	import courseList from './components/course-list.vue'
+	import articleList from './components/article-list.vue'
+	import questionList from './components/question-list.vue'
 	import tabBar from '@/components/common/tab-bar.vue'
 	
 	// 页面实例
@@ -34,7 +44,10 @@
 		components: {
 			keyword,
 			tabBar,
-			downBar
+			courseList,
+			articleList,
+			questionList
+			// downBar
 		},
 		data() {
 			return {
