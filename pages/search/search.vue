@@ -127,6 +127,16 @@
 
 				// 将当前搜索关键字保存到本地缓存
 				this.storageHistory()
+				
+				// 页面加载完成后调用 $nextTick
+				this.$nextTick(() => {
+					// 调用搜索的时候进行节流处理，防止太快请求多次
+					this.$util.throttle(() => {
+						// 触发当前标签页面的列表子组件方法，开始查询
+						this.$refs[`mescrollItem${this.tabIndex}`].search()
+					}, 1000)
+				})
+				
 				// uni.showLoading()
 			},
 			storageHistory() {

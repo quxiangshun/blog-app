@@ -45,7 +45,7 @@ const MescrollMoreItemMixin = {
 			this.mescroll = mescroll;
 			this.mescrollInitByRef && this.mescrollInitByRef(); // 兼容字节跳动小程序
 			// 自动加载当前tab的数据
-			if(this.i === this.index){
+			if(this.i === this.index && this.upOption.auto){
 				this.mescrollTrigger()
 			}
 		},
