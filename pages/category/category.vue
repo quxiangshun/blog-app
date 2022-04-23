@@ -140,7 +140,7 @@
 
 		.left {
 			background-color: #F8F9FB;
-			width: 260rpx;
+			width: 200rpx;
 			border-radius: 0 25rpx 25rpx 0;
 
 			.title {
@@ -148,7 +148,8 @@
 					color: #888888;
 					text-align: center;
 					font-size: 30rpx;
-					width: 100%;
+					width: 200rpx;
+					line-height: 40rpx;
 					padding: 55rpx 30rpx;
 					// 在分类前面加上竖线表示激活
 					// 在激活之前先把父元素取相对定位
