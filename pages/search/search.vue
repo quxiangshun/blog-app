@@ -21,12 +21,17 @@
 		
 		<!-- 标签体内容 -->
 		<block v-if="searched">
-			<course-list v-show="tabIndex === 0" :params="params" :content="content"></course-list>
-			<article-list v-show="tabIndex === 1" :params="params" :content="content"></article-list>
-			<question-list v-show="tabIndex === 2" :params="params" :content="content"></question-list>
+			<!-- 子组件 (i: 每个tab页的专属下标;  index: 当前tab的下标) -->
+			
+			<!-- 如果每个子组件布局不一样, 可拆开写 (注意ref只能为 "mescrollItem下标" 的格式, 另外 :i="下标" :index="tabIndex"也是固定写法) : -->
+			<!-- <home ref="mescrollItem0" :i="0" :index="tabIndex"></home>
+			<shopcart ref="mescrollItem1" :i="1" :index="tabIndex"></shopcart>
+			<user ref="mescrollItem2" :i="2" :index="tabIndex"></user> -->
+			
+			<course-list ref="mescrollItem0" :i="0" :index="tabIndex" :params="params" :content="content"></course-list>
+			<article-list ref="mescrollItem1" :i="1" :index="tabIndex" :params="params" :content="content"></article-list>
+			<question-list ref="mescrollItem2" :i="2" :index="tabIndex" :params="params" :content="content"></question-list>
 		</block>
-		
-		<view v-if="searched" v-for="i in 100" :key="i">{{i}}</view>
 	</view>
 </template>
 
@@ -37,17 +42,19 @@
 	import articleList from './components/article-list.vue'
 	import questionList from './components/question-list.vue'
 	import tabBar from '@/components/common/tab-bar.vue'
+	import MescrollMoreMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mixins/mescroll-more.js";
 	
 	// 页面实例
 	let webView = null;
 	export default {
+		mixins: [MescrollMoreMixin], // 多个mescroll-body写在子组件时, 则使用mescroll-more.js补充子组件的页面生命周期
 		components: {
 			keyword,
 			tabBar,
+			// downBar,
 			courseList,
 			articleList,
 			questionList
-			// downBar
 		},
 		data() {
 			return {

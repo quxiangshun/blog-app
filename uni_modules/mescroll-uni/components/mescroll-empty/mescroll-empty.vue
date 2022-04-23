@@ -79,6 +79,7 @@ export default {
 	width: 100%;
 	padding: 100rpx 50rpx;
 	text-align: center;
+	text-align: -webkit-center;
 }
 
 .mescroll-empty.empty-fixed {
