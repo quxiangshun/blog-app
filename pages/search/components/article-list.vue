@@ -7,7 +7,7 @@
 		<mescroll-body :ref="'mescrollRef'+i" @init="mescrollInit" :down="downOption" @down="downCallback"
 			:up="upOption" @up="upCallback" @emptyclick="emptyClick">
 			<!-- 数据列表 -->
-			<!-- <view v-for="i in 100" :key="i">{{i}}</view> -->
+			<article-item v-for="(item, index) in list" :key="index" :item="item"></article-item>
 		</mescroll-body>
 	</view>
 </template>
@@ -16,10 +16,14 @@
 	import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 	import MescrollMoreItemMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mixins/mescroll-more-item.js";
 	import downBar from './down-bar.vue'
+	
+	import api from '@/api/article.js'
+	import articleItem from '@/components/common/article-item.vue'
 	export default {
 		mixins: [MescrollMixin, MescrollMoreItemMixin], // 注意此处还需使用MescrollMoreItemMixin (必须写在MescrollMixin后面)
 		components: {
-			downBar
+			downBar,
+			articleItem
 		},
 		props: {
 			i: Number, // 每个tab页的专属下标 (除了支付宝小程序必须在这里定义, 其他平台都可不用写, 因为已在MescrollMoreItemMixin定义)
@@ -40,6 +44,14 @@
 		},
 		data() {
 			return {
+				searchData: {
+					content: null, //关键字内容
+					sort: null, // 排序（new/hot）
+					labelId: null, // 标签ID
+					categoryId: null, // 分类ID
+					
+				},
+				list: [],
 				downOption:{
 					auto:false // 不自动加载 (mixin已处理第一个tab触发downCallback)
 				},
@@ -57,20 +69,46 @@
 				}
 			}
 		},
+		mounted() {
+			// 如果有其他页面带的请求参数，则获取对应的请求参数值，将参数与this.searchData合并
+			// Object.keys返回对象中所有的key名称，返回值数组
+			this.params && Object.keys(this.searchData).forEach(key => {
+				this.searchData[key] = this.params[key] || null
+			})
+			// console.log('mounted合并的searchData', this.searchData)
+		},
 		methods: {
 			/**
 			 * this.$emit('search', {labelId: labelId, categoryId: label.categoryId})
 			 * @param {Object} data
 			 */
 			search(data) {
-				console.log('数据:::', data, this.content, this.params)
+				// console.log('数据:::', data, this.content, this.params)
+				// 合并关键字内容，去掉左右空格
+				this.searchData.content = this.content && this.content.trim()
+				// 对象拷贝，合并数据，data中的属性会合并到this.searchData对象属性值上
+				Object.assign(this.searchData, data)
+				
+				// console.log('合并后数据:::', this.searchData)
+				// 内容将page.name=1，在upCallback
 				this.mescroll.resetUpScroll()
 			},
 			// 上拉加载的回调
-			upCallback(page) {
-				console.log('文章列表upCallback', page, this.content, this.params)
-				// mixin默认延时500自动结束加载
-				this.mescroll.endSuccess(0)
+			async upCallback(page) {
+				// console.log('文章列表upCallback', page, this.searchData)
+				// 根据分页条件查询列表数据
+				const {data} = await api.getList(this.searchData, page.num, page.size)
+				// 注意是声明的常量list
+				const list = data.records
+				if(page.num === 1) {
+					this.list = []
+					// 回到顶部（距离顶部的位置,时长毫秒数）
+					this.mescroll.scrollTo(0, 0)
+				}
+				this.list = this.list.concat(list)
+				
+				// 请求成功，隐藏加载装填
+				this.mescroll.endBySize(list.length, data.total)
 			},
 			//点击空布局按钮的回调
 			emptyClick(){
