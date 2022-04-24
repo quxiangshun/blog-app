@@ -23,10 +23,10 @@
 			<category-box :categoryList="categoryList"></category-box>
 			<view class="list-container">
 				<!-- 热门推荐 -->
-				<swiper-course name="热门推荐" word="HOT" :courseData="hotCourseList" params="{sort: 'hot'}"></swiper-course>
-				<scroll-course name="近期上新" word="NEW" :courseData="newCourseList" params="{sort: 'new'}"></scroll-course>
-				<swiper-course name="免费精选" word="FREE" :courseData="freeCourseList" params="{isFree: 1}"></swiper-course>
-				<list-course name="付费精品" word="NICE" :courseData="niceCourseList" params="{isFree: 0}"></list-course>
+				<swiper-course name="热门推荐" word="HOT" :courseData="hotCourseList" :params="{sort: 'hot'}"></swiper-course>
+				<scroll-course name="近期上新" word="NEW" :courseData="newCourseList" :params="{sort: 'new'}"></scroll-course>
+				<swiper-course name="免费精选" word="FREE" :courseData="freeCourseList" :params="{isFree: 1}"></swiper-course>
+				<list-course name="付费精品" word="NICE" :courseData="niceCourseList" :params="{isFree: 0}"></list-course>
 			</view>
 		</mescroll-body>
 	</view>

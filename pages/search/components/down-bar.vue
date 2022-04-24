@@ -82,6 +82,25 @@
 					}
 					
 					// 其他页面（非分类页：首页全部按钮）跳转过来带的参数
+					// 1. 获取请求参数中第一个key值，与downBarList里面的每个元素的type进行匹配
+					const key = Object.keys(newVal)[0]
+					// 2. 找到目标元素
+					const target = this.downBars.find((item) => {
+						return item.type === key
+					})
+					// console.log(':::::', target)
+					if(target) {
+						// 3. 从目标元素中找到list数组(弹出的列表)元素ID进行匹配请求参数中的value值
+						const value = newVal[key]
+						target.list.find((item) => {
+							if(item.id === value) {
+								// 找到了对应的下拉选项中的对象，传递到标题处
+								target.name = item.name
+								target.id = item.id
+								return true // 匹配到直接结束，不用再往下匹配
+							}
+						})
+					}
 				}
 			}
 		},
