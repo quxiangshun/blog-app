@@ -18,7 +18,7 @@
 			indicator-active-color="#FFFFFF" :autoplay="true" :interval="4000" :duration="1000" :circular="true"
 			:current="current" @change="swiperChange">
 			<swiper-item class="swiper-item" v-for="(item, index) in bannerList" :key="index">
-				<image :src="item.imageUrl"></image>
+				<image @click="navTo(`${item.advertUrl}`)" :src="item.imageUrl"></image>
 			</swiper-item>
 		</swiper>
 	</view>
