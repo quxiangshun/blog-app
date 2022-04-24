@@ -89,6 +89,7 @@
 			 * @param {Object} data
 			 */
 			search(data) {
+				console.log('search data', data)
 				// console.log('数据:::', data, this.content, this.params)
 				// 合并关键字内容，去掉左右空格
 				this.searchData.content = this.content && this.content.trim()

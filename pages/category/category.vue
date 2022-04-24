@@ -74,21 +74,24 @@
 					this.activeIndex = this.value.activeIndex > -1 ? this.value.activeIndex + 1 : this.activeIndex
 				}
 				// 获取当前选中的分类
-				this.getLabelList(this.activeIndex, this.categoryList[0])
+				this.getLabelList(this.activeIndex)
 			},
 			/**
+			 * 获取标签列表(分类下标，分类信息)
 			 * @param {Object} index 分类下标
 			 * @param {Object} item 分类信息
 			 */
 			getLabelList(index, item) {
-				if(item && item.name === '全部分类') {
+				// 选中样式
+				this.activeIndex = index
+				if (item && item.name === '全部分类') {
 					this.searchPageChangeLabel(item)
 					return
 				}
-				// 选中样式
-				this.activeIndex = index
-				// 通过item获取标签
-				this.labelList = item.labelList
+				// 获取点击的分类对象
+				const activeCategory = this.categoryList[index]
+				// 通过分类对象获取标签列表
+				this.labelList = activeCategory.labelList
 			},
 			// 点击标签到搜索页
 			clickLabel(item) {
@@ -112,7 +115,7 @@
 			searchPageChangeLabel(item) {
 				// 判断用来避免重复点击
 				// this.value.name上次名称(分类、标签)，item.name是点击的名称，item.name是分类名称
-				if(this.value.name !== item.name && this.value.name !== item.cname) {
+				if (this.value.name !== item.name && this.value.name !== item.cname) {
 					// 如果父组件传递的是对象，则可以直接修改值
 					// 如果有cname则是选择的‘不限’标签，否则是具体的标签名
 					this.value.name = item.cname || item.name

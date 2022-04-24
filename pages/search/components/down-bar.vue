@@ -76,6 +76,8 @@
 						obj.id = newVal.labelId
 						// 为了弹窗后，显示当前标签所属分类
 						obj.activeIndex = newVal.activeIndex
+						// 为了从首页分类进入搜索页面，下拉筛选标签处高亮显示
+						obj.categoryId = newVal.categoryId
 						return
 					}
 				}

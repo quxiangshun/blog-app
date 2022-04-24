@@ -1,8 +1,9 @@
 <template>
 	<view class="category-box">
 		<!-- slice(开始下标, 结束小标)，返回指定范围的元素，包头不包尾（前闭后开） -->
-		<view v-for="(item, index) in categoryList.slice(0, 7)" :key="index">{{item.name}}</view>
-		<view>全部分类</view>
+		<view v-for="(item, index) in categoryList.slice(0, 7)" :key="index"
+			@click="toSearchPage(item.id, item.name, index)">{{item.name}}</view>
+		<view@click="toSearchPage(null, '全部分类', -1)">全部分类</view>
 	</view>
 </template>
 
@@ -44,6 +45,16 @@
 						name: '粤剧'
 					},
 				]
+			}
+		},
+		methods: {
+			toSearchPage(id, name, index) {
+				const params = {
+					categoryId: id,
+					name: name,
+					activeIndex: index
+				}
+				this.navTo(`/pages/search/search?params=${JSON.stringify(params)}`)
 			}
 		}
 	}
