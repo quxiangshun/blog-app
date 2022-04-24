@@ -121,6 +121,14 @@
 			 */
 			searchByLabel(label) {
 				// console.log('down-bar page in search page',label)
+				// #ifdef MP
+				this.clickDownView(label)
+				// 获取最后一个全部分类对象，将标题替换
+				const obj = this.downBarList[this.downBarList.length - 1]
+				obj.name = label.name
+				obj.id = label.id
+				obj.categoryId = label.categoryId
+				// #endif
 				this.$emit('search', {labelId: label.id, categoryId: label.categoryId})
 			}
 		}
