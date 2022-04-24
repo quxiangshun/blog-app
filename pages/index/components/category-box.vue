@@ -1,9 +1,12 @@
 <template>
 	<view class="category-box">
-		<!-- slice(开始下标, 结束小标)，返回指定范围的元素，包头不包尾（前闭后开） -->
+		<!-- slice(开始下标, 结束小标)，返回指定范围的元素，包头不包尾（前闭后开）
+		 注意：在旧版本中toSearchPage(item.id, item.name, index)"的item无法获取值，需要用categoryList[index].id代替
+		 -->
 		<view v-for="(item, index) in categoryList.slice(0, 7)" :key="index"
 			@click="toSearchPage(item.id, item.name, index)">{{item.name}}</view>
-		<view@click="toSearchPage(null, '全部分类', -1)">全部分类</view>
+		<view@click="toSearchPage(null, '全部分类' , -1)">全部分类
+	</view>
 	</view>
 </template>
 
@@ -69,7 +72,7 @@
 		// 上右下左
 		padding: 20rpx 30rpx 0 30rpx;
 
-		>view {
+		view {
 			width: 160rpx;
 			height: 70rpx;
 			background-color: $jh-color-grey;
