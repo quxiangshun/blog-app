@@ -5,7 +5,7 @@
 				<text class="name">{{name}}</text>
 				<text v-if="word" class="word">{{word}}</text>
 			</view>
-			<view class="all">
+			<view class="all" @click="toSearchPage">
 				<text>全部</text>
 				<text class="iconfont icon-right"></text>
 			</view>
@@ -25,6 +25,12 @@
 			word: { // HOT
 				type: String,
 				default: null
+			},
+			params: Object, // 点击'全部'按钮要向搜索页传递的参数
+		},
+		methods: {
+			toSearchPage() {
+				this.navTo(`/pages/search/search?params=${JSON.stringify(this.params)}`)
 			}
 		}
 	}

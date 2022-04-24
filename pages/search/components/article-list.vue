@@ -74,7 +74,8 @@
 			// 如果有其他页面带的请求参数，则获取对应的请求参数值，将参数与this.searchData合并
 			// Object.keys返回对象中所有的key名称，返回值数组
 			this.params && Object.keys(this.searchData).forEach(key => {
-				this.searchData[key] = this.params[key] || null
+				const val = this.params[key];
+				this.searchData[key] = (val || val === 0) ? val : null
 			})
 			// console.log('mounted合并的searchData', this.searchData)
 		},

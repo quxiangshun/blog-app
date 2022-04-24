@@ -1,5 +1,5 @@
 <template>
-	<list-box :name="name" :word="word">
+	<list-box :name="name" :word="word" :params="params">
 		<course-item v-for="(item, i) in courseData" :key="i" :item="item"></course-item>
 	</list-box>
 </template>
@@ -24,7 +24,8 @@
 			courseData: {
 				type: Array,
 				default: () => []
-			}
+			},
+			params: Object, // 点击'全部'按钮要向搜索页传递的参数
 		}
 	}
 </script>

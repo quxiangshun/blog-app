@@ -1,5 +1,5 @@
 <template>
-	<list-box :name="name" :word="word">
+	<list-box :name="name" :word="word" :params="params">
 		<scroll-view class="list-scroll noScorll" scroll-x="true">
 			<view class="list-scroll-view" v-for="(item, i) in courseData.slice(0, 8)" :key="i">
 				<course-item :item="item" :isColumn="true"></course-item>
@@ -28,7 +28,8 @@
 			courseData: {
 				type: Array,
 				default: () => []
-			}
+			},
+			params: Object, // 点击'全部'按钮要向搜索页传递的参数
 		}
 	}
 </script>

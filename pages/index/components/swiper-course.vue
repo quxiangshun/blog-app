@@ -1,5 +1,5 @@
 <template>
-	<list-box :name="name" :word="word">
+	<list-box :name="name" :word="word" :params="params">
 		<swiper class="list-swiper" next-margin="30rpx" :style="{height: `${200 * row}rpx`}">
 			<swiper-item v-for="(n, index) in column" :key="index">
 				<course-item v-for="(item, i) in courseData.slice(index * row, (index + 1) * row)" :key="i"
@@ -37,7 +37,8 @@
 			courseData: {
 				type: Array,
 				default: () => []
-			}
+			},
+			params: Object, // 点击'全部'按钮要向搜索页传递的参数
 		}
 	}
 </script>

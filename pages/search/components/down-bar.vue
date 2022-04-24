@@ -80,6 +80,8 @@
 						obj.categoryId = newVal.categoryId
 						return
 					}
+					
+					// 其他页面（非分类页：首页全部按钮）跳转过来带的参数
 				}
 			}
 		},
