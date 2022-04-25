@@ -45,11 +45,23 @@
 				pageHeight: 3000, //手机屏幕的视口高度
 				statusNavHeight: 0, // 状态栏和导航栏的高度
 				enableScrollY: false, // 详情区域是否允许纵向滚动，默认false不允许
+				detailTop: 0, // 详情区域距离顶部的距离
 			}
 		},
 		onLoad(option) {
 			// console.log(option.id)
 			this.getPageHeight()
+		},
+		// 第一次页面渲染完成之后触发
+		onReady() {
+			let view = uni.createSelectorQuery().in(this).select(".course-details");
+			view.fields({
+				ract: true
+			}, data => {
+				// console.log("节点的顶部高度为" + data.top);
+				this.detailTop = data.top
+			}).exec();
+
 		},
 		/**
 		 * 页面滚动到底部监听事件，不是scroll-view组件
@@ -57,7 +69,15 @@
 		onReachBottom() {
 			this.enableScrollY = true
 		},
-
+		/**
+		 * 监听页面滚动
+		 * @param {Object} e
+		 */
+		onPageScroll(e) {
+			if(this.enableScrollY && e.scrollTop < this.detailTop) {
+				this.enableScrollY = false
+			}
+		},
 		methods: {
 			changeTab(event) {
 				this.tabIndex = event.detail.current
