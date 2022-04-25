@@ -8,7 +8,10 @@
 				<swiper-item v-for="(item, index) in tabs" :key="index">
 					<scroll-view class="scroll-box" scroll-y="true" >
 						<view class="details-info">
-							<view v-for="i in 100" :key="i">{{index}}-{{i}}</view>
+							<course-info v-if="index === 0"></course-info>
+							<course-dir v-if="index === 1"></course-dir>
+							<course-comment v-if="index === 2"></course-comment>
+							<course-group v-if="index === 3"></course-group>
 						</view>
 					</scroll-view>
 				</swiper-item>
@@ -19,11 +22,19 @@
 
 <script>
 	import courseHeader from './components/course-hearder.vue'
+	import courseInfo from './components/course-info.vue'
+	import courseDir from './components/course-dir.vue'
+	import courseComment from './components/course-comment.vue'
+	import courseGroup from './components/course-group.vue'
 	import tabBar from '@/components/common/tab-bar.vue'
 	import tabs from '@/config/course-details-tabs.js'
 	export default {
 		components: {
 			courseHeader,
+			courseInfo,
+			courseDir,
+			courseComment,
+			courseGroup,
 			tabBar
 		},
 		data() {
