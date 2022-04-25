@@ -151,6 +151,7 @@
                 "navigationBarTitleText": "",
                 "navigationBarBackgroundColor": "#345DC2",
 				"navigationBarTextStyle":"white",
+				"onReachBottomDistance": 0, // 页面上拉触底事件触发时距离页面底部的距离，默认是50px，监听事件：onReachBottom
 				"app-plus": {
 					// 禁止回弹效果
 					"bounce": "none",

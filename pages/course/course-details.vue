@@ -6,7 +6,8 @@
 			<tab-bar :tabs="tabs" v-model="tabIndex"></tab-bar>
 			<swiper class="swiper-box" :duration="300" :current="tabIndex" circular @change="changeTab">
 				<swiper-item v-for="(item, index) in tabs" :key="index">
-					<scroll-view class="scroll-box" scroll-y="true" >
+					<scroll-view class="scroll-box" :scroll-y="enableScrollY" :upper-threshold="0"
+						@scrolltoupper="scrolltoupper">
 						<view class="details-info">
 							<course-info v-if="index === 0"></course-info>
 							<course-dir v-if="index === 1"></course-dir>
@@ -43,12 +44,20 @@
 				tabIndex: 0, // 当前选项卡下标,
 				pageHeight: 3000, //手机屏幕的视口高度
 				statusNavHeight: 0, // 状态栏和导航栏的高度
+				enableScrollY: false, // 详情区域是否允许纵向滚动，默认false不允许
 			}
 		},
 		onLoad(option) {
 			// console.log(option.id)
 			this.getPageHeight()
 		},
+		/**
+		 * 页面滚动到底部监听事件，不是scroll-view组件
+		 */
+		onReachBottom() {
+			this.enableScrollY = true
+		},
+
 		methods: {
 			changeTab(event) {
 				this.tabIndex = event.detail.current
@@ -60,18 +69,28 @@
 				const system = res.platform
 				// 状态栏高度
 				const statusBarHeight = res.statusBarHeight
-				
+
 				// uni提供的获取导航栏高度的的接口只支持百度小程序，因为在这边需要计算
-				if(system === 'android') {// android 默认是48像素
+				if (system === 'android') { // android 默认是48像素
 					this.statusNavHeight = statusBarHeight + 48
-				} else if(system === 'ios') {// ios 默认是44像素
+				} else if (system === 'ios') { // ios 默认是44像素
 					this.statusNavHeight = statusBarHeight + 44
 				}
 				// windowHeight是可使用高度(屏幕高度-状态栏高度),
 				// 但是在page中配置"type":"transparent"透明渐变，res.windowHeight和res.screenHeight相等
-				console.log(res.screenHeight, res.windowHeight)
+				// console.log(res.screenHeight, res.windowHeight)
 				this.pageHeight = res.screenHeight - this.statusNavHeight
-				console.log('pageHeight', this.pageHeight)
+				// console.log('pageHeight', this.pageHeight)
+			},
+			// 关于scrollView组件滚动到顶部
+			scrolltoupper() {
+				// 1. 让页面滚动条回到顶部
+				uni.pageScrollTo({
+					scrollTop: 0,
+					duration: 150
+				})
+				// 2. 禁用详情scrollView滚动
+				this.enableScrollY = false
 			}
 		}
 	}
@@ -80,9 +99,12 @@
 <style lang="scss">
 	.course-details {
 		overflow: hidden;
-		.swiper-box, .scroll-box {
+
+		.swiper-box,
+		.scroll-box {
 			height: 100%;
 		}
+
 		.details-info {
 			// 被隐藏的80rpx(标签选项卡高度)
 			padding-bottom: 80rpx;
