@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<view v-for="i in 200" :key="i">课程评论-{{i}}</view>
+		<no-data desc="暂无评论"></no-data>
 	</view>
 </template>
 

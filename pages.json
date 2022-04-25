@@ -170,6 +170,15 @@
             }
             
         }
+        ,{
+            "path" : "components/no-data/no-data",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
