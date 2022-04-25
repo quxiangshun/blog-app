@@ -51,6 +51,10 @@
 		onLoad(option) {
 			// console.log(option.id)
 			this.getPageHeight()
+			// #ifdef APP-PLUS
+			// 禁用点击状态栏回到顶部
+			this.noStatusScrollTop()
+			// #endif
 		},
 		// 第一次页面渲染完成之后触发
 		onReady() {
@@ -111,6 +115,15 @@
 				})
 				// 2. 禁用详情scrollView滚动
 				this.enableScrollY = false
+			},
+			noStatusScrollTop() {
+				// 此对象相当于html5plus里的plus.webview.currentWebview()。在uni-app里vue页面直接使用plus.webview.currentWebview()无效
+				const currentWebview = this.$scope.$getAppWebview();
+				
+				// 禁用点击状态栏回到顶部
+				currentWebview.setStyle({
+					"scrollsToTop": false
+				});
 			}
 		}
 	}
