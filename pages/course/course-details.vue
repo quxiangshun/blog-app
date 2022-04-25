@@ -49,7 +49,7 @@
 			}
 		},
 		onLoad(option) {
-			// console.log(option.id)
+			console.log(option.id)
 			this.getPageHeight()
 			// #ifdef APP-PLUS
 			// 禁用点击状态栏回到顶部
@@ -60,9 +60,9 @@
 		onReady() {
 			let view = uni.createSelectorQuery().in(this).select(".course-details");
 			view.fields({
-				ract: true
+				rect: true
 			}, data => {
-				// console.log("节点的顶部高度为" + data.top);
+				console.log("节点的位置为", JSON.stringify(data));
 				this.detailTop = data.top
 			}).exec();
 
@@ -78,6 +78,11 @@
 		 * @param {Object} e
 		 */
 		onPageScroll(e) {
+			if(this.detailTop - this.statusNavHeight <= e.scrollTop) {
+				// 如果页面到达底部则将详情区域滚动条开启
+				this.enableScrollY = true
+				return
+			}
 			if(this.enableScrollY && e.scrollTop < this.detailTop) {
 				this.enableScrollY = false
 			}
@@ -85,6 +90,12 @@
 		methods: {
 			changeTab(event) {
 				this.tabIndex = event.detail.current
+				
+				// 切换选项，页面切换到底部，只暴露scrollView区域
+				uni.pageScrollTo({
+					scrollTop: this.detailTop,
+					duration: 300
+				})
 			},
 			// 获取当前页面视口高度
 			getPageHeight() {
