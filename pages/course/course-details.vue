@@ -20,6 +20,9 @@
 		</view>
 		<!-- 底部按钮 立即购买 -->
 		<bottom-btn></bottom-btn>
+		
+		<!-- 分享组件 -->
+		<jh-share ref="jhShare"></jh-share>
 	</view>
 </template>
 
@@ -100,6 +103,17 @@
 				this.enableScrollY = false
 			}
 		},
+		// #ifdef APP-PLUS
+		/**
+		 * 监听App端右上角分享按钮
+		 * @param {Object} e
+		 */
+		onNavigationBarButtonTap(e) {
+			if(e.type === 'share') {
+				this.$refs.jhShare.showHandler()
+			}
+		},
+		// #endif
 		methods: {
 			changeTab(event) {
 				this.tabIndex = event.detail.current
