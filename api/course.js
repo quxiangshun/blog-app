@@ -26,5 +26,48 @@ export default {
 			method: 'POST',
 			data: {...query, current, size}
 		})
+	},
+	/**
+	 * 通过课程ID查询课程基本信息
+	 * @param {String, Number} id
+	 */
+	getCourseById(id) {
+		return request({
+			url: `/course/api/course/${id}`,
+		})
+	},
+	/**
+	 * 通过课程ID查询课程章节数据
+	 * @param {String, Number} id
+	 */
+	getChapterSectionById(id) {
+		return request({
+			url: `/course/api/chapter/section/list/${id}`,
+		})
+	},
+	/**
+	 * 通过课程ID查询课程评论列表数据
+	 * @param {String, Number} id
+	 */
+	getCourseCommentById(id) {
+		return request({
+			url: `/course/api/comment/list/${id}`,
+		})
+	},
+	/**
+	 * 通过课程ID查询课程套餐信息
+	 * @param {String, Number} id
+	 */
+	getCourseGroupById(id) {
+		return request({
+			url: `/course/api/group/list/${id}`,
+		})
+	},
+	addCourseComment(data) {
+		return request({
+			url: '/course/comment',
+			method: 'POST',
+			data
+		})
 	}
 }

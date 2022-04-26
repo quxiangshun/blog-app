@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<!-- 主图和基本信息 -->
-		<course-header></course-header>
+		<course-header :course="course"></course-header>
 		<view class="course-details" :style="'height:' + pageHeight + 'px'">
 			<tab-bar :tabs="tabs" v-model="tabIndex"></tab-bar>
 			<swiper class="swiper-box" :duration="300" :current="tabIndex" circular @change="changeTab">
@@ -9,10 +9,10 @@
 					<scroll-view class="scroll-box" :scroll-y="enableScrollY" :upper-threshold="0"
 						@scrolltoupper="scrolltoupper">
 						<view class="details-info">
-							<course-info v-if="index === 0"></course-info>
-							<course-dir v-if="index === 1"></course-dir>
-							<course-comment v-if="index === 2"></course-comment>
-							<course-group v-if="index === 3"></course-group>
+							<course-info v-if="index === 0" :detailUrls="course.detailUrls"></course-info>
+							<course-dir v-if="index === 1" :chapterList="chapterList"></course-dir>
+							<course-comment v-if="index === 2" :commentList="commentList"></course-comment>
+							<course-group v-if="index === 3" :groupList="groupList"></course-group>
 						</view>
 					</scroll-view>
 				</swiper-item>
@@ -32,6 +32,7 @@
 	import bottomBtn from './components/bottom-btn.vue'
 	import tabBar from '@/components/common/tab-bar.vue'
 	import tabs from '@/config/course-details-tabs.js'
+	import api from '@/api/course.js'
 	export default {
 		components: {
 			courseHeader,
@@ -50,15 +51,23 @@
 				statusNavHeight: 0, // 状态栏和导航栏的高度
 				enableScrollY: false, // 详情区域是否允许纵向滚动，默认false不允许
 				detailTop: 0, // 详情区域距离顶部的距离
+				id: null, // 课程ID
+				course: {}, // 课程基本信息
+				chapterList: [], // 章节信息
+				commentList: [], // 评论信息
+				groupList: [], // 套餐信息
 			}
 		},
 		onLoad(option) {
-			console.log(option.id)
 			this.getPageHeight()
 			// #ifdef APP-PLUS
 			// 禁用点击状态栏回到顶部
 			this.noStatusScrollTop()
 			// #endif
+			// console.log(option.id)
+			// 获取课程ID，查询课程相关数据
+			this.id = option.id
+			this.loadData()
 		},
 		// 第一次页面渲染完成之后触发
 		onReady() {
@@ -139,7 +148,36 @@
 				currentWebview.setStyle({
 					"scrollsToTop": false
 				});
-			}
+			},
+			loadData() {
+				// 1. 查询课程基本信息
+				this.getCourseById()
+				// 2. 查询章节列表
+				this.getChapterSectionById()
+				// 3. 查询评论列表
+				this.getCourseCommentById()
+				// 4. 查询组合套餐列表
+				this.getCourseGroupById()
+			},
+			/**
+			 * 查询课程基本信息
+			 */
+			async getCourseById() {
+				const {data} = await api.getCourseById(this.id);
+				this.course = data
+			},
+			async getChapterSectionById() {
+				const {data} = await api.getChapterSectionById(this.id);
+				this.chapterList = data
+			},
+			async getCourseCommentById() {
+				const {data} = await api.getCourseCommentById(this.id);
+				this.commentList = data
+			},
+			async getCourseGroupById() {
+				const {data} = await api.getCourseGroupById(this.id);
+				this.groupList = data
+			},
 		}
 	}
 </script>
