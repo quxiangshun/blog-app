@@ -4,26 +4,9 @@
 		<view v-show="isShow" @click="showHandler()" class="mask" @touchmove.stop.prevent="()=>{}"></view>
 		<view v-show="isShow" class="share-body">
 			<scroll-view class="share-scroll noScorll" scroll-x="true">
-				<view class="share-item">
-					<image src="/static/share/weixin.png"></image>
-					<view>微信好友</view>
-				</view>
-				
-				<view class="share-item">
-					<image src="/static/share/pengyouquan.png"></image>
-					<view>微信朋友圈</view>
-				</view>
-				<view class="share-item">
-					<image src="/static/share/weibo.png"></image>
-					<view>新浪微博</view>
-				</view>
-				<view class="share-item">
-					<image src="/static/share/qq.png"></image>
-					<view>QQ好友</view>
-				</view>
-				<view class="share-item">
-					<image src="/static/share/link.png"></image>
-					<view>复制链接</view>
+				<view class="share-item" v-for="(item, index) in providerList" :key="index">
+					<image :src="item.icon"></image>
+					<view>{{item.name}}</view>
 				</view>
 			</scroll-view>
 			<view class="share-cancel" @click="showHandler()">取消</view>
@@ -36,7 +19,77 @@
 		data() {
 			return {
 				isShow: false,
+				title: '天韵戏曲交流',
+				shareText: 'uni-app可以同时发布成原生App、小程序、H5，邀请你一起体验！',
+				href: "https://uniapp.dcloud.io",
+				image: '',
+				// https://uniapp.dcloud.io/api/plugins/share.html#%E5%88%86%E4%BA%AB
+				shareType: 0, // 0图文 1文字 2图片
+				providerList: [], // 提供商
 			}
+		},
+		// 此处不能写onLoad，这个是组件，没有页面钩子，使用vue原生钩子
+		created() {
+			uni.getProvider({
+				service: 'share',
+				success: (e) => {
+					console.log('success', e);
+					let data = []
+					for (let i = 0; i < e.provider.length; i++) {
+						switch (e.provider[i]) {
+							case 'weixin':
+								data.push({
+									name: '微信好友',
+									id: 'weixin',
+									sort: 0,
+									icon: '/static/share/weixin.png'
+								})
+								data.push({
+									name: '微信朋友圈',
+									id: 'weixin',
+									type: 'WXSenceTimeline',
+									sort: 1,
+									icon: '/static/share/pengyouquan.png'
+								})
+								break;
+							case 'sinaweibo':
+								data.push({
+									name: '新浪微博',
+									id: 'sinaweibo',
+									sort: 2,
+									icon: '/static/share/weibo.png'
+								})
+								break;
+							case 'qq':
+								data.push({
+									name: 'QQ好友',
+									id: 'qq',
+									sort: 3,
+									icon: '/static/share/qq.png'
+								})
+								break;
+							default:
+								break;
+						}
+					}
+					data.push({
+						name: '复制链接',
+						id: 'copy',
+						sort: 4,
+						icon: '/static/share/link.png'
+					})
+					this.providerList = data.sort((x, y) => {
+						return x.sort - y.sort
+					});
+				},
+				fail: (e) => {
+					console.log('获取分享通道失败', e);
+					uni.showModal({
+						content: '获取分享通道失败',
+						showCancel: false
+					})
+				}
+			});
 		},
 		methods: {
 			// 显示隐藏分享组件
@@ -85,12 +138,14 @@
 				width: 60rpx;
 				height: 60rpx;
 			}
+
 			view {
 				color: $jh-text-color-grey;
 				font-size: 25rpx;
 				padding-top: 10rpx;
 			}
 		}
+
 		.share-cancel {
 			background-color: #FFFFFF;
 			text-align: center;
