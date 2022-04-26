@@ -18,6 +18,8 @@
 				</swiper-item>
 			</swiper>
 		</view>
+		<!-- 底部按钮 立即购买 -->
+		<bottom-btn></bottom-btn>
 	</view>
 </template>
 
@@ -27,6 +29,7 @@
 	import courseDir from './components/course-dir.vue'
 	import courseComment from './components/course-comment.vue'
 	import courseGroup from './components/course-group.vue'
+	import bottomBtn from './components/bottom-btn.vue'
 	import tabBar from '@/components/common/tab-bar.vue'
 	import tabs from '@/config/course-details-tabs.js'
 	export default {
@@ -36,6 +39,7 @@
 			courseDir,
 			courseComment,
 			courseGroup,
+			bottomBtn,
 			tabBar
 		},
 		data() {
@@ -150,8 +154,8 @@
 		}
 
 		.details-info {
-			// 被隐藏的80rpx(标签选项卡高度)
-			padding-bottom: 80rpx;
+			// 被隐藏的80rpx(标签选项卡高度)，此处添加需要添加立即够吗button的高度
+			padding-bottom: 180rpx;
 		}
 	}
 </style>
