@@ -62,7 +62,7 @@
 			view.fields({
 				rect: true
 			}, data => {
-				console.log("节点的位置为", JSON.stringify(data));
+				// console.log("节点的位置为", JSON.stringify(data));
 				this.detailTop = data.top
 			}).exec();
 
