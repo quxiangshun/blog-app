@@ -10,7 +10,7 @@
 				<text v-if="course.priceDiscount" class="youhui">优惠价</text>
 			</view>
 			<view class="title">
-				uniapp在线教育视频教程
+				{{course.title}}
 			</view>
 			<view class="count">
 				<text class="iconfont icon-haoping2">{{course.goodRate}}好评</text>
