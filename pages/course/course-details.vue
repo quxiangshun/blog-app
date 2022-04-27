@@ -10,7 +10,8 @@
 						@scrolltoupper="scrolltoupper">
 						<view class="details-info">
 							<course-info v-if="index === 0" :detailUrls="course.detailUrls"></course-info>
-							<course-dir v-if="index === 1" :chapterList="chapterList"></course-dir>
+							<course-dir v-if="index === 1" :chapterList="chapterList" :isBuy="isBuy"
+								@playVideo="playVideo"></course-dir>
 							<course-comment v-if="index === 2" :commentList="commentList"></course-comment>
 							<course-group v-if="index === 3" :groupList="groupList"></course-group>
 						</view>
@@ -27,13 +28,12 @@
 		<!-- #endif -->
 
 		<!-- 试看窗口 -->
-		<view class="video-box mask" @touchmove.stop.prevent="()=>{}">
+		<view v-if="videoUrl" class="video-box mask" @click="closePlay" @touchmove.stop.prevent="()=>{}">
 			<view class="name">
 				<text>免费试看</text>
 				<text class="iconfont icon-close"></text>
 			</view>
-			<video id="playVideo" class="video"
-				src="https://vd3.bdstatic.com/mda-jkkgqi4rmyigr1gh/sc/mda-jkkgqi4rmyigr1gh.mp4"></video>
+			<video id="playVideo" class="video" :src="videoUrl"></video>
 		</view>
 	</view>
 </template>
@@ -72,6 +72,8 @@
 				commentList: [], // 评论信息
 				groupList: [], // 套餐信息
 				isBuy: false, // 是否购买课程，默认false未购买
+				videoUrl: null, // 播放视频地址
+				videoContext: null, // 播放器实例
 			}
 		},
 		onLoad(option) {
@@ -94,7 +96,8 @@
 				// console.log("节点的位置为", JSON.stringify(data));
 				this.detailTop = data.top
 			}).exec();
-
+			// 获取当前播放实例
+			this.videoContext = uni.createVideoContext('playVideo', this)
 		},
 		/**
 		 * 页面滚动到底部监听事件，不是scroll-view组件
@@ -257,6 +260,27 @@
 					// 未购买，跳转确认购买页面
 
 				}
+			},
+			// 关闭播放窗口
+			closePlay() {
+				this.videoContext.stop()
+				this.videoUrl = null
+			},
+			/**
+			 * 试看视频播放
+			 * @param {Object} obj 章节信息
+			 */
+			playVideo(obj) {
+				console.log(obj.section)
+				if (this.isBuy) {
+					this.navTo(`/pages/course/course-play?id=${this.id}`)
+					return
+				}
+				this.videoUrl = obj.section.videoUrl
+				this.$nextTick(() => {
+					// 自动播放
+					this.videoContext.play()
+				})
 			}
 		}
 	}
@@ -276,10 +300,11 @@
 			padding-bottom: 180rpx;
 		}
 	}
+
 	.video-box {
 		z-index: 100;
 		text-align: center;
-		
+
 		.name {
 			color: #FFFFFF;
 			position: relative;
@@ -290,9 +315,11 @@
 			font-size: 38rpx;
 			font-weight: bold;
 		}
+
 		.icon-close {
 			margin-left: 20rpx;
 		}
+
 		.video {
 			width: 750rpx;
 			height: 430rpx;
