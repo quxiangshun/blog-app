@@ -1,15 +1,74 @@
 <template>
 	<view>
-		<video src="https://vd3.bdstatic.com/mda-jkkgqi4rmyigr1gh/sc/mda-jkkgqi4rmyigr1gh.mp4"></video>
+		<!-- 状态栏高度，是为了显示状态栏 -->
+		<view :style="{height: statusBarHeight + 'rpx'}"></view>
+
+		<!-- poster:主图地址 -->
+		<video ref="video" class="video" :controls="false" :show-fullscreen-btn="false" :show-center-play-btn="false"
+			:show-progress="false" :poster="videoMidea.mainImage" :src="videoMidea.videoUrl" @ended="nextPlay"
+			@timeupdate="timeupdate"></video>
+		<text class="iconfont">&#xe613</text>
 	</view>
 </template>
 
 <script>
+	let videoContext = null // 媒体实例
 	export default {
-		
+		data() {
+			return {
+				statusBarHeight: 0,
+				videoMidea: {
+					id: 1,
+					title: '1-1 项目需求分析',
+					mainImage: 'https://pics6.baidu.com/feed/0e2442a7d933c895ff4183829e8c4cfa830200b0.jpeg?token=02d84b8835896cf4af92fdd5fc822d8d',
+					videoUrl: 'https://vd3.bdstatic.com/mda-jkkgqi4rmyigr1gh/sc/mda-jkkgqi4rmyigr1gh.mp4',
+				},
+			}
+		},
+		onLoad() {
+			this.statusBarHeight = uni.getSystemInfoSync().statusBarHeight
+		},
+		beforeCreate() {
+			// 引入图标
+			const domModule = uni.requireNativePlugin('dom')
+			domModule.addRule('fontFace', {
+				'fontFamily': "iconfont",
+				// 'src': "url('http://at.alicdn.com/t/font_2234252_v3hj1klw6k9.ttf')"
+				'src': "url('~@/static/icon/iconfont.ttf')"
+			});
+		},
+		mounted() {
+			// 获取媒体实例，不能使用uni.createAudioContext,在nvue文件中无效
+			this.videoContext = this.$refs.video
+			// console.log(this.videoContext)
+		},
+		methods: {
+			// 视频播放结束后会回调该方法
+			nextPlay() {
+
+			},
+			/**
+			 * 250ms触发一次该方法
+			 * 获取播放进度变化，视频时长，当前时长
+			 * @param {Object} event
+			 */
+			timeupdate(event) {
+
+			}
+
+		}
 	}
 </script>
 
 <style>
+	.iconfont {
+		font-family: iconfont;
+		font-size: 50rpx;
+		color: #FFFFFF;
+	}
 
+	.video {
+		width: 750rpx;
+		height: 225px;
+	}
 </style>
