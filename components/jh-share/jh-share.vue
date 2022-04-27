@@ -4,7 +4,7 @@
 		<view v-show="isShow" @click="showHandler()" class="mask" @touchmove.stop.prevent="()=>{}"></view>
 		<view v-show="isShow" class="share-body">
 			<scroll-view class="share-scroll noScorll" scroll-x="true">
-				<view class="share-item" v-for="(item, index) in providerList" :key="index">
+				<view class="share-item" v-for="(item, index) in providerList" :key="index" @click="share(item)">
 					<image :src="item.icon"></image>
 					<view>{{item.name}}</view>
 				</view>
@@ -22,7 +22,7 @@
 				title: '天韵戏曲交流',
 				shareText: 'uni-app可以同时发布成原生App、小程序、H5，邀请你一起体验！',
 				href: "https://uniapp.dcloud.io",
-				image: '',
+				image: 'https://www.baidu.com/img/PCfb_5bf082d29588c07f842ccde3f97243ea.png',
 				// https://uniapp.dcloud.io/api/plugins/share.html#%E5%88%86%E4%BA%AB
 				shareType: 0, // 0图文 1文字 2图片
 				providerList: [], // 提供商
@@ -33,7 +33,7 @@
 			uni.getProvider({
 				service: 'share',
 				success: (e) => {
-					console.log('success', e);
+					// console.log('success', e);
 					let data = []
 					for (let i = 0; i < e.provider.length; i++) {
 						switch (e.provider[i]) {
@@ -95,6 +95,143 @@
 			// 显示隐藏分享组件
 			showHandler() {
 				this.isShow = !this.isShow
+			},
+			async share(e) {
+				// console.log('分享通道:'+ e.id +'； 分享类型:' + this.shareType);
+				
+				if(!this.shareText && (this.shareType === 1 || this.shareType === 0)){
+					uni.showModal({
+						content:'分享内容不能为空',
+						showCancel:false
+					})
+					return;
+				}
+				
+				if(!this.image && (this.shareType === 2 || this.shareType === 0)){
+					uni.showModal({
+						content:'分享图片不能为空',
+						showCancel:false
+					})
+					return;
+				}
+				
+				let shareOPtions = {
+					provider: e.id,
+					scene: e.type && e.type === 'WXSenceTimeline' ? 'WXSenceTimeline' : 'WXSceneSession', //WXSceneSession”分享到聊天界面，“WXSenceTimeline”分享到朋友圈，“WXSceneFavorite”分享到微信收藏     
+					type: this.shareType,
+					success: (e) => {
+						console.log('success', e);
+						uni.showModal({
+							content: '已分享',
+							showCancel:false
+						})
+					},
+					fail: (e) => {
+						console.log('fail', e)
+						uni.showModal({
+							content: e.errMsg,
+							showCancel:false
+						})
+					},
+					complete:function(){
+						console.log('分享操作结束!')
+					}
+				}
+				
+				switch (this.shareType){
+					case 0:
+						shareOPtions.summary = this.shareText;
+						shareOPtions.imageUrl = this.image;
+						shareOPtions.title = this.title;
+						shareOPtions.href = this.href;
+						break;
+					case 1:
+						shareOPtions.summary = this.shareText;
+						break;
+					case 2:
+						shareOPtions.imageUrl = this.image;
+						break;
+					case 5:
+						shareOPtions.imageUrl = this.image ? this.image : 'https://vkceyugu.cdn.bspapp.com/VKCEYUGU-dc-site/b6304f00-5168-11eb-bd01-97bc1429a9ff.png'
+						shareOPtions.title = '欢迎体验uniapp';
+						shareOPtions.miniProgram = {
+							id:'gh_33446d7f7a26',
+							path:'/pages/tabBar/component/component',
+							webUrl:'https://uniapp.dcloud.io',
+							type:0
+						};
+						break;
+					default:
+						break;
+				}
+				
+				if(shareOPtions.type === 0 && plus.os.name === 'iOS'){//如果是图文分享，且是ios平台，则压缩图片 
+					shareOPtions.imageUrl = await this.compress();
+				}
+				if(shareOPtions.type === 1 && shareOPtions.provider === 'qq'){//如果是分享文字到qq，则必须加上href和title
+					shareOPtions.href = this.href;
+					shareOPtions.title = this.title;
+				}
+				// 隐藏加载中
+				uni.hideLoading()
+				uni.share(shareOPtions);
+			},
+			compress(){//压缩图片 图文分享要求分享图片大小不能超过20Kb
+				console.log('开始压缩');
+				let img = this.image;
+				return new Promise(async (res) => {
+					// var localPath = plus.io.convertAbsoluteFileSystem(img.replace('file://', ''));
+					uni.showLoading()
+					// console.log('after' + localPath);
+					if(img.startsWith('http')) {
+						// 下载网路图片到本地，返回本地存储的临时文件
+						img = await this.downFile(img)
+					}
+					// 压缩size
+					// plus.io.resolveLocalFileSystemURL(localPath, (entry) => {
+					plus.io.resolveLocalFileSystemURL(img, (entry) => {
+						entry.file((file) => {// 可通过entry对象操作图片 
+							console.log('getFile:' + JSON.stringify(file));
+							if(file.size > 20480) {// 压缩后size 大于20Kb
+								plus.zip.compressImage({
+									src: img,
+									dst: img.replace('.jpg', '2222.jpg').replace('.JPG', '2222.JPG'),
+									width: '10%',
+									height: '10%',
+									quality: 1,
+									overwrite: true
+								}, (event) => {
+									console.log('success zip****' + event.size);
+									let newImg = img.replace('.jpg', '2222.jpg').replace('.JPG', '2222.JPG');
+									res(newImg);
+								}, function(error) {
+									uni.showModal({
+										content:'分享图片太大,需要请重新选择图片!',
+										showCancel:false
+									})
+								});
+							}
+						});
+					}, (e) => {
+						console.log('Resolve file URL failed: ' + e.message);
+						uni.showModal({
+							content:'分享图片太大,需要请重新选择图片!',
+							showCancel:false
+						})
+					});
+				})
+			},
+			// 下载图片文件
+			downFile(url) {
+				return new Promise((resolve) => {
+					uni.downloadFile({
+						url,
+						success: res => {
+							// console.log('下载完成的临时路径', res.tempFilePath)
+							resolve(res.tempFilePath)
+						}
+					})
+				})
 			}
 		}
 	}
