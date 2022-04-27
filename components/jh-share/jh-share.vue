@@ -111,6 +111,20 @@
 			async share(e) {
 				// console.log('分享通道:'+ e.id +'； 分享类型:' + this.shareType);
 				
+				if(e.id === 'copy') {
+					// 复制链接
+					uni.setClipboardData({
+						data: this.href,
+						success: () => {
+							uni.hideToast()
+							this.$util.msg('内容已复制到剪贴板')
+						}
+					})
+					this.showHandler()
+					return
+				}
+				
+				
 				if(!this.shareText && (this.shareType === 1 || this.shareType === 0)){
 					uni.showModal({
 						content:'分享内容不能为空',
