@@ -19,7 +19,7 @@
 			</swiper>
 		</view>
 		<!-- 底部按钮 立即购买 -->
-		<bottom-btn></bottom-btn>
+		<bottom-btn :btnText="isBuy || course.isFree? '立即观看' : '立即购买'" @clickBottom="clickBottom"></bottom-btn>
 		
 		<!-- #ifdef APP-PLUS -->
 		<!-- 分享组件 -->
@@ -61,6 +61,7 @@
 				chapterList: [], // 章节信息
 				commentList: [], // 评论信息
 				groupList: [], // 套餐信息
+				isBuy: false, // 是否购买课程，默认false未购买
 			}
 		},
 		onLoad(option) {
@@ -179,6 +180,8 @@
 				});
 			},
 			loadData() {
+				// 0. 判断是否购买课程
+				this.getCourseIsBuy()
 				// 1. 查询课程基本信息
 				this.getCourseById()
 				// 2. 查询章节列表
@@ -187,6 +190,16 @@
 				this.getCourseCommentById()
 				// 4. 查询组合套餐列表
 				this.getCourseGroupById()
+			},
+			async getCourseIsBuy() {
+				// 如果已登录，则判断是否已购买
+				// {nav: false}表示未登录不用跳转登录页
+				const isLogin = this.$util.isLogin({nav: false})
+				if(!isLogin) {
+					const {data} = await api.getCourseIsBuy(this.id);
+					this.isBuy = data.isBuy
+					// console.log('isbuy', data, data.isBuy)
+				}
 			},
 			/**
 			 * 查询课程基本信息
@@ -211,6 +224,18 @@
 				const {data} = await api.getCourseGroupById(this.id);
 				this.groupList = data
 			},
+			/**
+			 * 点击底部按钮触发，从bottom-btn组件中传递的事件
+			 */
+			clickBottom() {
+				if(this.isBuy || course.isFree) {
+					// 已购买或免费，跳转视频播放页
+					this.navTo(`/pages/course/course-play?id=${this.id}`)
+				} else {
+					// 未购买，跳转确认购买页面
+					
+				}
+			}
 		}
 	}
 </script>

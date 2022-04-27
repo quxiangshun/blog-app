@@ -16,6 +16,7 @@
 		methods: {
 			clickHandler() {
 				// 点击按钮触发按钮
+				this.$emit('clickBottom')
 			}
 		}
 	}

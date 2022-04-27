@@ -3,11 +3,14 @@
 		<image class="img" :src="course.mainImage" lazy-load></image>
 		<view class="header-info">
 			<view class="price-info">
-				<!-- 优惠价 -->
-				<text v-if="course.priceDiscount">￥{{course.priceDiscount}}</text>
-				<!-- 原价 -->
-				<text :class="{price: course.priceDiscount}">￥{{course.priceOriginal}}</text>
-				<text v-if="course.priceDiscount" class="youhui">优惠价</text>
+				<text v-if="course.isFree">免费</text>
+				<block v-else>
+					<!-- 优惠价 -->
+					<text v-if="course.priceDiscount">￥{{course.priceDiscount}}</text>
+					<!-- 原价 -->
+					<text :class="{price: course.priceDiscount}">￥{{course.priceOriginal}}</text>
+					<text v-if="course.priceDiscount" class="youhui">优惠价</text>
+				</block>
 			</view>
 			<view class="title">
 				{{course.title}}
