@@ -21,8 +21,10 @@
 		<!-- 底部按钮 立即购买 -->
 		<bottom-btn></bottom-btn>
 		
+		<!-- #ifdef APP-PLUS -->
 		<!-- 分享组件 -->
 		<jh-share ref="jhShare" :shareData="course"></jh-share>
+		<!-- #endif -->
 	</view>
 </template>
 
@@ -114,6 +116,19 @@
 			}
 		},
 		// #endif
+		// #ifndef APP-PLUS || H5 || MP-BAIDU
+		/**
+		 * 针对小程序端分享
+		 * @param {Object} res
+		 */
+		// #endif
+		onShareAppMessage(res) {
+			return {
+				title: this.course.title,
+				path: this.$util.routePath(),
+				ImageUrl: this.course.mainImage
+			}
+		},
 		methods: {
 			changeTab(event) {
 				this.tabIndex = event.detail.current
@@ -179,6 +194,10 @@
 			async getCourseById() {
 				const {data} = await api.getCourseById(this.id);
 				this.course = data
+				// 将当前课程标题动态传递给导航
+				uni.setNavigationBarTitle({
+					title: this.course.title
+				})
 			},
 			async getChapterSectionById() {
 				const {data} = await api.getChapterSectionById(this.id);
