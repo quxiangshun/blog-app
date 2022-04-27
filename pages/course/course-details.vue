@@ -22,7 +22,7 @@
 		<bottom-btn></bottom-btn>
 		
 		<!-- 分享组件 -->
-		<jh-share ref="jhShare"></jh-share>
+		<jh-share ref="jhShare" :shareData="course"></jh-share>
 	</view>
 </template>
 

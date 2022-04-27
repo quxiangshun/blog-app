@@ -17,6 +17,10 @@ import * as util from './common/js/util.js'
 // 把util挂载到Vue原型上，在组件页面中通过this.$util.方法调用
 Vue.prototype.$util = util
 
+// 把env挂载到Vue原型上，在组件页面中通过this.$env.方法调用
+import * as env from './config/env.js'
+Vue.prototype.$env = env
+
 App.mpType = 'app'
 const app = new Vue({
 	...App

@@ -16,16 +16,27 @@
 
 <script>
 	export default {
+		props: {
+			shareData: {
+				type: Object
+			}
+		},
 		data() {
 			return {
 				isShow: false,
 				title: '天韵戏曲交流',
 				shareText: 'uni-app可以同时发布成原生App、小程序、H5，邀请你一起体验！',
-				href: "https://uniapp.dcloud.io",
+				href: this.$env.HOST_H5 + this.$util.routePath(), // 获取当前页面的url(html5)
 				image: 'https://www.baidu.com/img/PCfb_5bf082d29588c07f842ccde3f97243ea.png',
 				// https://uniapp.dcloud.io/api/plugins/share.html#%E5%88%86%E4%BA%AB
 				shareType: 0, // 0图文 1文字 2图片
 				providerList: [], // 提供商
+			}
+		},
+		watch: {
+			shareData(newVal) {
+				this.image = newVal.mainImage
+				this.title = newVal.title
 			}
 		},
 		// 此处不能写onLoad，这个是组件，没有页面钩子，使用vue原生钩子
