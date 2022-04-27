@@ -169,7 +169,28 @@
 				}
             }
             
-        }
+        },
+		{
+			"path": "pages/course/course-play",
+			"style": {
+				"app-plus": {
+					"subNVues": [
+						{
+							"id": "top",
+							"path": "pages/course/subNView/video",
+							"style": {
+								// dock原生子窗体在页面中停靠
+								"position": "dock",
+								// 停靠位置
+								"dock": "top",
+								"width": "100%",
+								"height": "245px"
+							}
+						}
+					]
+				}
+			}
+		}
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
