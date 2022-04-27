@@ -11,7 +11,7 @@
 						<view class="details-info">
 							<course-info v-if="index === 0" :detailUrls="course.detailUrls"></course-info>
 							<course-dir v-if="index === 1" :chapterList="chapterList" :isBuy="isBuy"
-								@playVideo="playVideo"></course-dir>
+								:activeObj="activeObj" @playVideo="playVideo"></course-dir>
 							<course-comment v-if="index === 2" :commentList="commentList"></course-comment>
 							<course-group v-if="index === 3" :groupList="groupList"></course-group>
 						</view>
@@ -74,6 +74,7 @@
 				isBuy: false, // 是否购买课程，默认false未购买
 				videoUrl: null, // 播放视频地址
 				videoContext: null, // 播放器实例
+				activeObj: {}, // 点击的章节下标
 			}
 		},
 		onLoad(option) {
@@ -271,7 +272,9 @@
 			 * @param {Object} obj 章节信息
 			 */
 			playVideo(obj) {
-				console.log(obj.section)
+				// 解决小程序高亮显示问题
+				this.activeObj = obj.activeObj
+				// console.log(obj.section)
 				if (this.isBuy) {
 					this.navTo(`/pages/course/course-play?id=${this.id}`)
 					return

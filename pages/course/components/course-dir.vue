@@ -3,8 +3,9 @@
 		<view v-for="(item, index) in chapterList" :key="index">
 			<text class="chapters text-ellipsis" style="-webkit-line-clamp: 1;">第{{index + 1}}章 {{item.name}}</text>
 			<!-- 第几节 -->
-			<view class="sections row" v-for="(section, si) in item.sectionList" :key="si"
-				@click="playVideo(index, si, section)">
+			<view class="sections row"
+				:class="{active: index === activeObj.chapterIndex && si === activeObj.sectionIndex}"
+				v-for="(section, si) in item.sectionList" :key="si" @click="playVideo(index, si, section)">
 				<text class="iconfont icon-roundrightfill"></text>
 				<view class="row">
 					<text>{{index + 1}}-{{si + 1}}</text>
@@ -22,6 +23,13 @@
 			isBuy: { // 是否购买
 				type: Boolean,
 				default: false
+			},
+			activeObj: {
+				type: Object,
+				default: () => ({
+					chapterIndex: -1, // 章的下标
+					sectionIndex: -1, // 节的下标
+				})
 			},
 			chapterList: {
 				type: Array,
@@ -52,8 +60,12 @@
 			playVideo(chapterIndex, sectionIndex, section) {
 				// 免费或已购买直接跳转到视频播放列表页面
 				if (section.isFree || this.isBuy) {
+					// 这样更改值小程序不生效，需要重新传递（小程序无法直接修改props中的属性）
+					this.activeObj.chapterIndex = chapterIndex
+					this.activeObj.sectionIndex = sectionIndex
 					this.$emit('playVideo', {
-						section
+						section,
+						activeObj: this.activeObj
 					})
 				} else {
 					this.$util.msg('请先购买')
@@ -97,6 +109,10 @@
 				flex: 1;
 				text-align: right;
 			}
+		}
+
+		.active {
+			color: $jh-text-color-blue;
 		}
 	}
 </style>
