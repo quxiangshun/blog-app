@@ -20,11 +20,21 @@
 		</view>
 		<!-- 底部按钮 立即购买 -->
 		<bottom-btn :btnText="isBuy || course.isFree? '立即观看' : '立即购买'" @clickBottom="clickBottom"></bottom-btn>
-		
+
 		<!-- #ifdef APP-PLUS -->
 		<!-- 分享组件 -->
 		<jh-share ref="jhShare" :shareData="course"></jh-share>
 		<!-- #endif -->
+
+		<!-- 试看窗口 -->
+		<view class="video-box mask" @touchmove.stop.prevent="()=>{}">
+			<view class="name">
+				<text>免费试看</text>
+				<text class="iconfont icon-close"></text>
+			</view>
+			<video id="playVideo" class="video"
+				src="https://vd3.bdstatic.com/mda-jkkgqi4rmyigr1gh/sc/mda-jkkgqi4rmyigr1gh.mp4"></video>
+		</view>
 	</view>
 </template>
 
@@ -97,12 +107,12 @@
 		 * @param {Object} e
 		 */
 		onPageScroll(e) {
-			if(this.detailTop - this.statusNavHeight <= e.scrollTop) {
+			if (this.detailTop - this.statusNavHeight <= e.scrollTop) {
 				// 如果页面到达底部则将详情区域滚动条开启
 				this.enableScrollY = true
 				return
 			}
-			if(this.enableScrollY && e.scrollTop < this.detailTop) {
+			if (this.enableScrollY && e.scrollTop < this.detailTop) {
 				this.enableScrollY = false
 			}
 		},
@@ -112,7 +122,7 @@
 		 * @param {Object} e
 		 */
 		onNavigationBarButtonTap(e) {
-			if(e.type === 'share') {
+			if (e.type === 'share') {
 				this.$refs.jhShare.showHandler()
 			}
 		},
@@ -133,7 +143,7 @@
 		methods: {
 			changeTab(event) {
 				this.tabIndex = event.detail.current
-				
+
 				// 切换选项，页面切换到底部，只暴露scrollView区域
 				uni.pageScrollTo({
 					scrollTop: this.detailTop,
@@ -173,7 +183,7 @@
 			noStatusScrollTop() {
 				// 此对象相当于html5plus里的plus.webview.currentWebview()。在uni-app里vue页面直接使用plus.webview.currentWebview()无效
 				const currentWebview = this.$scope.$getAppWebview();
-				
+
 				// 禁用点击状态栏回到顶部
 				currentWebview.setStyle({
 					"scrollsToTop": false
@@ -194,9 +204,13 @@
 			async getCourseIsBuy() {
 				// 如果已登录，则判断是否已购买
 				// {nav: false}表示未登录不用跳转登录页
-				const isLogin = this.$util.isLogin({nav: false})
-				if(!isLogin) {
-					const {data} = await api.getCourseIsBuy(this.id);
+				const isLogin = this.$util.isLogin({
+					nav: false
+				})
+				if (!isLogin) {
+					const {
+						data
+					} = await api.getCourseIsBuy(this.id);
 					this.isBuy = data.isBuy
 					// console.log('isbuy', data, data.isBuy)
 				}
@@ -205,7 +219,9 @@
 			 * 查询课程基本信息
 			 */
 			async getCourseById() {
-				const {data} = await api.getCourseById(this.id);
+				const {
+					data
+				} = await api.getCourseById(this.id);
 				this.course = data
 				// 将当前课程标题动态传递给导航
 				uni.setNavigationBarTitle({
@@ -213,27 +229,33 @@
 				})
 			},
 			async getChapterSectionById() {
-				const {data} = await api.getChapterSectionById(this.id);
+				const {
+					data
+				} = await api.getChapterSectionById(this.id);
 				this.chapterList = data
 			},
 			async getCourseCommentById() {
-				const {data} = await api.getCourseCommentById(this.id);
+				const {
+					data
+				} = await api.getCourseCommentById(this.id);
 				this.commentList = data
 			},
 			async getCourseGroupById() {
-				const {data} = await api.getCourseGroupById(this.id);
+				const {
+					data
+				} = await api.getCourseGroupById(this.id);
 				this.groupList = data
 			},
 			/**
 			 * 点击底部按钮触发，从bottom-btn组件中传递的事件
 			 */
 			clickBottom() {
-				if(this.isBuy || course.isFree) {
+				if (this.isBuy || course.isFree) {
 					// 已购买或免费，跳转视频播放页
 					this.navTo(`/pages/course/course-play?id=${this.id}`)
 				} else {
 					// 未购买，跳转确认购买页面
-					
+
 				}
 			}
 		}
@@ -252,6 +274,32 @@
 		.details-info {
 			// 被隐藏的80rpx(标签选项卡高度)，此处添加需要添加立即够吗button的高度
 			padding-bottom: 180rpx;
+		}
+	}
+	.video-box {
+		z-index: 100;
+		text-align: center;
+		
+		.name {
+			color: #FFFFFF;
+			position: relative;
+			top: 380rpx;
+			/* #ifdef MP */
+			top: 300rpx;
+			/* #endif */
+			font-size: 38rpx;
+			font-weight: bold;
+		}
+		.icon-close {
+			margin-left: 20rpx;
+		}
+		.video {
+			width: 750rpx;
+			height: 430rpx;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
 		}
 	}
 </style>
