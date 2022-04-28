@@ -2,14 +2,14 @@
 	<view class="category row">
 		<scroll-view class="left noScorll" scroll-y="true">
 			<view class="title">
-				<view :class="{active: index === activeIndex}" v-for="(item, index) in categoryList"
+				<view :class="{active: index === activeIndex}" v-for="(item, index) in categoryList" :key="index"
 					@click.stop="getLabelList(index, item)">{{item.name}}
 				</view>
 			</view>
 		</scroll-view>
 		<scroll-view class="right" scroll-y="true">
 			<view class="tag">
-				<view v-for="(item, index) in labelList" @click.stop="clickLabel(item)">{{item.name}}</view>
+				<view v-for="(item, index) in labelList" :key="index" @click.stop="clickLabel(item)">{{item.name}}</view>
 			</view>
 		</scroll-view>
 	</view>
