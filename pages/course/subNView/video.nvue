@@ -128,7 +128,14 @@
 				this.current = event.detail.currentTime
 			},
 			backHandler() {
-
+				// 全屏，则退出全屏
+				if(this.fullScreen) {
+					this.fullScreenHandler()
+					return
+				} else {
+					// 非全屏退回上一页
+					uni.navigateBack()
+				}
 			},
 			/**
 			 * 播放或暂停视频
