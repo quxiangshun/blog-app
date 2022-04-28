@@ -18,10 +18,12 @@
 		
 		<!-- 底部按钮 -->
 		<view class="bottom center">
+			<!-- #ifdef APP-PLUS -->
 			<view class="btn-item one column">
 				<text class="iconfont icon-Share-Outline"></text>
 				<text>分享</text>
 			</view>
+			<!-- #endif -->
 			<view class="btn-item one column">
 				<text class="iconfont icon-edit"></text>
 				<text>评价</text>
@@ -56,6 +58,9 @@
 </script>
 
 <style lang="scss">
+	.course-play {
+		padding-bottom: 100rpx;
+	}
 	.course-info {
 		padding: 30rpx;
 		font-weight: bold;
