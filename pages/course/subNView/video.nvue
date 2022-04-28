@@ -6,23 +6,69 @@
 		<!-- poster:主图地址 -->
 		<video ref="video" class="video" :controls="false" :show-fullscreen-btn="false" :show-center-play-btn="false"
 			:show-progress="false" :poster="videoMidea.mainImage" :src="videoMidea.videoUrl" @ended="nextPlay"
-			@timeupdate="timeupdate"></video>
-		<text class="iconfont">&#xe613</text>
+			@timeupdate="timeupdate">
+
+			<!-- 后退和标题 -->
+			<cover-view v-if="showControls" class="control-top row">
+				<text class="iconfont" @click.stop="backHandler">&#xe679;</text>
+				<text class="title">{{videoMidea.title}}</text>
+			</cover-view>
+
+			<!-- 中间暂停和播放按钮 -->
+			<cover-view class="control-center center" @click="showHideControls()">
+				<text v-if="showControls && !play" class="stop iconfont" @click.stop="playVideo">&#xe625;</text>
+			</cover-view>
+
+			<!-- 底部区域 -->
+			<cover-view v-if="showControls" class="control-bottom row center">
+				<!-- 播放、暂停、下一节 -->
+				<view class="row">
+					<!-- 播放 -->
+					<text v-if="!play" class="video-btn iconfont" @click.stop="playVideo">&#xe625;</text>
+					<!-- 暂停 -->
+					<text v-else class="video-btn iconfont" @click.stop="playVideo">&#xe62c;</text>
+					<!-- 下一节 -->
+					<text class="video-btn iconfont" @click.stop="playVideo">&#xe61b;</text>
+				</view>
+				<!-- 当前播放时长 -->
+				<text class="time">00:00</text>
+				<!-- 进度条 -->
+				<view class="bottom-slider">
+					<slider-bar></slider-bar>
+				</view>
+				<!-- 总时长 -->
+				<text class="time">88:39</text>
+				<!-- 倍速、全屏 -->
+				<view class="row">
+					<!-- 倍速 -->
+					<text class="video-btn">1.0x</text>
+					<!-- 全屏 -->
+					<text class="iconfont" @click.stop="playVideo">&#xe623;</text>
+				</view>
+			</cover-view>
+		</video>
 	</view>
 </template>
 
 <script>
+	import sliderBar from './components/slider-bar.nvue'
 	let videoContext = null // 媒体实例
+	let timer = null // 定时器对象
 	export default {
+		components: {
+			sliderBar
+		},
 		data() {
 			return {
 				statusBarHeight: 0,
 				videoMidea: {
 					id: 1,
-					title: '1-1 项目需求分析',
+					title: '1-1 项目需求分析项目需求',
 					mainImage: 'https://pics6.baidu.com/feed/0e2442a7d933c895ff4183829e8c4cfa830200b0.jpeg?token=02d84b8835896cf4af92fdd5fc822d8d',
 					videoUrl: 'https://vd3.bdstatic.com/mda-jkkgqi4rmyigr1gh/sc/mda-jkkgqi4rmyigr1gh.mp4',
 				},
+				play: false, // 正在播放
+				showControls: true, // 显示空间按钮
 			}
 		},
 		onLoad() {
@@ -39,8 +85,8 @@
 		},
 		mounted() {
 			// 获取媒体实例，不能使用uni.createAudioContext,在nvue文件中无效
-			this.videoContext = this.$refs.video
-			// console.log(this.videoContext)
+			videoContext = this.$refs.video
+			// console.log(videoContext)
 		},
 		methods: {
 			// 视频播放结束后会回调该方法
@@ -54,8 +100,38 @@
 			 */
 			timeupdate(event) {
 
-			}
+			},
+			backHandler() {
 
+			},
+			/**
+			 * 播放或暂停视频
+			 */
+			playVideo() {
+				if(this.play) {
+					// 暂停
+					videoContext.pause()
+				} else {
+					// 播放
+					videoContext.play()
+					// 控制按钮
+					this.showHideControls()
+				}
+				this.play = !this.play
+			},
+			/**
+			 * 显示或隐藏控制按钮
+			 */
+			showHideControls() {
+				this.showControls = !this.showControls
+				// 定时隐藏控制层
+				if(this.showControls) {
+					timer = timer ? clearTimeout(timer) : null
+					timer = setTimeout(() => {
+						this.showControls = false
+					}, 3000)
+				}
+			},
 		}
 	}
 </script>
@@ -70,5 +146,70 @@
 	.video {
 		width: 750rpx;
 		height: 225px;
+	}
+
+	.control-top {
+		height: 90rpx;
+		padding: 0 15rpx;
+		align-items: center;
+		background-image: linear-gradient(to top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));
+	}
+
+	.title {
+		color: #FFFFFF;
+		font-size: 30rpx;
+		width: 500rpx;
+		lines: 1;
+		text-overflow: ellipsis;
+	}
+
+	/* 中间区域 */
+	.control-center {
+		position: absolute;
+		top: 90rpx;
+		left: 0;
+		right: 0;
+		bottom: 90rpx;
+		/* 添加这个背景色，防止有渐变阴影 */
+		background-color: rgba(0, 0, 0, 0);
+	}
+
+	.stop {
+		padding: 20rpx 35rpx;
+		background-color: rgba(0, 0, 0, 0.6);
+		border-radius: 10rpx;
+	}
+
+	/* 底部按钮 */
+	.control-bottom {
+		position: absolute;
+		bottom: 0;
+		height: 90rpx;
+		width: 750rpx;
+		background-image: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+	}
+
+	.video-btn {
+		width: 80rpx;
+		line-height: 90rpx;
+		text-align: center;
+		color: #FFFFFF;
+		font-size: 30rpx;
+	}
+
+	.time {
+		font-size: 28rpx;
+		color: #FFFFFF;
+		width: 110rpx;
+		text-align: center;
+	}
+
+	.bottom-slider {
+		flex-direction: row;
+		align-items: center;
+		height: 90rpx;
+		/* 减去固定宽度就是此进度条宽度 */
+		flex: 1;
+		text-align: center;
 	}
 </style>
