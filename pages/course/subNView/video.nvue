@@ -31,13 +31,13 @@
 					<text class="video-btn iconfont" @click.stop="playVideo">&#xe61b;</text>
 				</view>
 				<!-- 当前播放时长 -->
-				<text class="time">00:00</text>
+				<text class="time">{{currentStr}}</text>
 				<!-- 进度条 -->
 				<view class="bottom-slider">
 					<slider-bar></slider-bar>
 				</view>
 				<!-- 总时长 -->
-				<text class="time">88:39</text>
+				<text class="time">{{durationStr}}</text>
 				<!-- 倍速、全屏 -->
 				<view class="row">
 					<!-- 倍速 -->
@@ -69,6 +69,8 @@
 				},
 				play: false, // 正在播放
 				showControls: true, // 显示空间按钮
+				duration: 0, // 当前视频总时长（单位秒s）
+				current: 0, // 当前播放时长（单位秒）
 			}
 		},
 		onLoad() {
@@ -88,6 +90,14 @@
 			videoContext = this.$refs.video
 			// console.log(videoContext)
 		},
+		computed: {
+			durationStr() {
+				return this.formatSeconds(this.duration)
+			},
+			currentStr() {
+				return this.formatSeconds(this.current)
+			}
+		},
 		methods: {
 			// 视频播放结束后会回调该方法
 			nextPlay() {
@@ -96,10 +106,11 @@
 			/**
 			 * 250ms触发一次该方法
 			 * 获取播放进度变化，视频时长，当前时长
-			 * @param {Object} event
+			 * @param {Object} event{duration: 总时长；currentTime：当前播放时长}
 			 */
 			timeupdate(event) {
-
+				this.duration = event.detail.duration
+				this.current = event.detail.currentTime
 			},
 			backHandler() {
 
@@ -108,7 +119,7 @@
 			 * 播放或暂停视频
 			 */
 			playVideo() {
-				if(this.play) {
+				if (this.play) {
 					// 暂停
 					videoContext.pause()
 				} else {
@@ -125,13 +136,25 @@
 			showHideControls() {
 				this.showControls = !this.showControls
 				// 定时隐藏控制层
-				if(this.showControls) {
+				if (this.showControls) {
 					timer = timer ? clearTimeout(timer) : null
 					timer = setTimeout(() => {
 						this.showControls = false
 					}, 3000)
 				}
 			},
+			formatSeconds(totalSecond) {
+				let minute = parseInt(totalSecond / 60)
+				if (minute < 10) minute = '0' + minute
+				let second = parseInt(totalSecond % 60)
+				if (second < 10) second = '0' + second
+				let time = minute + ":" + second
+				if(totalSecond >= 0) {
+					return time;
+				} else {
+					return "00:00"
+				}
+			}
 		}
 	}
 </script>
