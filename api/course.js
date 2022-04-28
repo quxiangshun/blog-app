@@ -72,6 +72,15 @@ export default {
 			url: `/course/course/is-buy/${courseId}`,
 		})
 	},
+	/**
+	 * 通过课程ID查询已购买的课程列表
+	 * @param {String, Number} courseId 课程ID
+	 */
+	getCourseBuyList(courseId) {
+		return request({
+			url: `/course/course/buy/list/${courseId}`
+		})
+	},
 	addCourseComment(data) {
 		return request({
 			url: '/course/comment',
