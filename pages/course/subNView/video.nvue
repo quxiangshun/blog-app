@@ -35,18 +35,24 @@
 				<!-- 进度条 -->
 				<view class="bottom-slider">
 					<slider-bar :duration="duration" :current="current" :sliderWidth="sliderWidth"
-						:direction="fullScreen ? 'screenY' : 'screenX'" @change="change"></slider-bar>
+						:direction="fullScreen ? 'screenY' : 'screenX'" :rate="parseFloat(currentRate)" @change="change"></slider-bar>
 				</view>
 				<!-- 总时长 -->
 				<text class="time">{{durationStr}}</text>
 				<!-- 倍速、全屏 -->
 				<view class="row center">
 					<!-- 倍速 -->
-					<text class="video-btn">1.0x</text>
+					<text class="video-btn" @click="showHideRateView">{{currentRate}}x</text>
 					<!-- 全屏 -->
 					<text v-if="!fullScreen" class="iconfont" @click.stop="fullScreenHandler">&#xe623;</text>
 					<text v-else class="iconfont" @click.stop="fullScreenHandler">&#xe61e;</text>
 				</view>
+			</cover-view>
+
+			<!-- 倍速非全屏rate-list、rate-item   倍速全屏rate-list-full、rate-item-full -->
+			<cover-view v-if="rateView" class="center" :class="fullScreen ? 'rate-list-full' : 'rate-list'">
+				<text :class="{'rate-item-full': fullScreen, 'rate-item': !fullScreen, 'active': rate === currentRate}"
+					v-for="(rate, index) in rates" :key="index" @click.stop="clickRate(rate)">{{rate}}x</text>
 			</cover-view>
 		</video>
 	</view>
@@ -76,6 +82,9 @@
 				fullScreen: false, // 是否全屏
 				controlsHeight: 0, // 控制层占用高度
 				controlsWidth: 0, // 控制层占用宽度
+				rates: ['0.8', '1.0', '1.25', '1.5', '2.0'],
+				currentRate: '1.0', // 当前倍速
+				rateView: false, // 显示隐藏倍速窗口
 			}
 		},
 		onLoad() {
@@ -162,6 +171,8 @@
 			 */
 			showHideControls() {
 				this.showControls = !this.showControls
+				// 隐藏倍速视图
+				this.rateView = false
 				// 定时隐藏控制层
 				if (this.showControls) {
 					timer = timer ? clearTimeout(timer) : null
@@ -191,6 +202,22 @@
 				this.current = currentSecond
 				// 跳转指定位置进行播放
 				videoContext.seek(currentSecond)
+			},
+			/**
+			 * 点击的倍速
+			 * @param {Object} rate
+			 */
+			clickRate(rate) {
+				this.currentRate = rate
+				// 设置倍速率
+				videoContext.playbackRate(parseFloat(rate))
+				this.showHideRateView()
+			},
+			/**
+			 * 显示隐藏倍速窗口
+			 */
+			showHideRateView() {
+				this.rateView = !this.rateView
 			},
 			formatSeconds(totalSecond) {
 				let minute = parseInt(totalSecond / 60)
@@ -283,5 +310,41 @@
 		/* 减去固定宽度就是此进度条宽度 */
 		flex: 1;
 		text-align: center;
+	}
+
+	/* 非全屏倍速样式 */
+	.rate-list {
+		position: absolute;
+		bottom: 70rpx;
+		right: 40rpx;
+		background-color: rgba(0, 0, 0, 0.7);
+		width: 110rpx;
+		border-radius: 5rpx;
+	}
+
+	.rate-item {
+		color: #FFFFFF;
+		font-size: 33rpx;
+		line-height: 50rpx;
+	}
+
+	/* 全屏倍速样式 */
+	.rate-list-full {
+		width: 200rpx;
+		background-color: rgba(0, 0, 0, 0.7);
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+	}
+
+	.rate-item-full {
+		color: #FFFFFF;
+		font-size: 40rpx;
+		line-height: 100rpx;
+	}
+
+	.active {
+		color: #345DC2;
 	}
 </style>
