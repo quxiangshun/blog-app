@@ -20,7 +20,7 @@
 			</cover-view>
 
 			<!-- 底部区域 -->
-			<cover-view v-if="showControls" class="control-bottom row center">
+			<cover-view v-if="showControls" class="control-bottom row center" :style="{width: `${controlsWidth}px`}">
 				<!-- 播放、暂停、下一节 -->
 				<view class="row">
 					<!-- 播放 -->
@@ -39,11 +39,12 @@
 				<!-- 总时长 -->
 				<text class="time">{{durationStr}}</text>
 				<!-- 倍速、全屏 -->
-				<view class="row">
+				<view class="row center">
 					<!-- 倍速 -->
 					<text class="video-btn">1.0x</text>
 					<!-- 全屏 -->
-					<text class="iconfont" @click.stop="playVideo">&#xe623;</text>
+					<text v-if="!fullScreen" class="iconfont" @click.stop="fullScreenHandler">&#xe623;</text>
+					<text v-else class="iconfont" @click.stop="fullScreenHandler">&#xe61e;</text>
 				</view>
 			</cover-view>
 		</video>
@@ -71,10 +72,17 @@
 				showControls: true, // 显示空间按钮
 				duration: 0, // 当前视频总时长（单位秒s）
 				current: 0, // 当前播放时长（单位秒）
+				fullScreen: false, // 是否全屏
+				controlsHeight: 0, // 控制层占用高度
+				controlsWidth: 0, // 控制层占用宽度
 			}
 		},
 		onLoad() {
-			this.statusBarHeight = uni.getSystemInfoSync().statusBarHeight
+			const info =  uni.getSystemInfoSync();
+			this.statusBarHeight = info.statusBarHeight
+			this.controlsHeight = info.screenHeight
+			this.controlsWidth = info.screenWidth
+			
 		},
 		beforeCreate() {
 			// 引入图标
@@ -96,6 +104,13 @@
 			},
 			currentStr() {
 				return this.formatSeconds(this.current)
+			}
+		},
+		watch: {
+			fullScreen(newVal, oldVal) {
+				const width = this.controlsWidth
+				this.controlsWidth = this.controlsHeight
+				this.controlsHeight = width
 			}
 		},
 		methods: {
@@ -142,6 +157,19 @@
 						this.showControls = false
 					}, 3000)
 				}
+			},
+			/**
+			 * 切换或退出全屏
+			 */
+			fullScreenHandler() {
+				if (this.fullScreen) {
+					// 退出全屏
+					videoContext.exitFullScreen()
+				} else {
+					// 切换到全屏
+					videoContext.requestFullScreen()
+				}
+				this.fullScreen = !this.fullScreen
 			},
 			formatSeconds(totalSecond) {
 				let minute = parseInt(totalSecond / 60)
