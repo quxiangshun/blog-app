@@ -34,7 +34,8 @@
 				<text class="time">{{currentStr}}</text>
 				<!-- 进度条 -->
 				<view class="bottom-slider">
-					<slider-bar></slider-bar>
+					<slider-bar :duration="duration" :current="current" :sliderWidth="sliderWidth"
+						:direction="fullScreen ? 'screenY' : 'screenX'" @change="change"></slider-bar>
 				</view>
 				<!-- 总时长 -->
 				<text class="time">{{durationStr}}</text>
@@ -70,7 +71,7 @@
 				},
 				play: false, // 正在播放
 				showControls: true, // 显示空间按钮
-				duration: 0, // 当前视频总时长（单位秒s）
+				duration: 60, // 当前视频总时长（单位秒s）
 				current: 0, // 当前播放时长（单位秒）
 				fullScreen: false, // 是否全屏
 				controlsHeight: 0, // 控制层占用高度
@@ -78,11 +79,11 @@
 			}
 		},
 		onLoad() {
-			const info =  uni.getSystemInfoSync();
+			const info = uni.getSystemInfoSync();
 			this.statusBarHeight = info.statusBarHeight
 			this.controlsHeight = info.screenHeight
 			this.controlsWidth = info.screenWidth
-			
+
 		},
 		beforeCreate() {
 			// 引入图标
@@ -104,6 +105,10 @@
 			},
 			currentStr() {
 				return this.formatSeconds(this.current)
+			},
+			sliderWidth() {
+				// rpx 转 px 320：4个按钮宽度 220：是两个时间宽度
+				return this.controlsWidth - uni.upx2px(540)
 			}
 		},
 		watch: {
@@ -129,7 +134,7 @@
 			},
 			backHandler() {
 				// 全屏，则退出全屏
-				if(this.fullScreen) {
+				if (this.fullScreen) {
 					this.fullScreenHandler()
 					return
 				} else {
@@ -178,13 +183,22 @@
 				}
 				this.fullScreen = !this.fullScreen
 			},
+			/**
+			 * 拖动进度条结束后触发，传递当前位置的描述
+			 * @param {Object} currentSecond
+			 */
+			change(currentSecond) {
+				this.current = currentSecond
+				// 跳转指定位置进行播放
+				videoContext.seek(currentSecond)
+			},
 			formatSeconds(totalSecond) {
 				let minute = parseInt(totalSecond / 60)
 				if (minute < 10) minute = '0' + minute
 				let second = parseInt(totalSecond % 60)
 				if (second < 10) second = '0' + second
 				let time = minute + ":" + second
-				if(totalSecond >= 0) {
+				if (totalSecond >= 0) {
 					return time;
 				} else {
 					return "00:00"
