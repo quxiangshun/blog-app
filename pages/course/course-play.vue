@@ -3,7 +3,7 @@
 		<!-- #ifndef APP-PLUS -->
 		<video id="myVideo" style="width: 750rpx; height: 423rpx;" :poster="poster" :src="src" @ended="nextPlay"></video>
 		<!-- #endif -->
-
+		<jh-comment></jh-comment>
 		<!-- 课程标题与详情按钮 -->
 		<view class="space-between course-info">
 			<text class="title">{{course.title}}</text>
