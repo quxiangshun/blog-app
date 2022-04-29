@@ -1,9 +1,10 @@
 <template>
 	<view class="course-play">
 		<!-- #ifndef APP-PLUS -->
-		<video id="myVideo" style="width: 750rpx; height: 423rpx;" :poster="poster" :src="src" @ended="nextPlay"></video>
+		<video id="myVideo" style="width: 750rpx; height: 423rpx;" :poster="poster" :src="src"
+			@ended="nextPlay"></video>
 		<!-- #endif -->
-		<jh-comment></jh-comment>
+
 		<!-- 课程标题与详情按钮 -->
 		<view class="space-between course-info">
 			<text class="title">{{course.title}}</text>
@@ -24,14 +25,16 @@
 				<text>分享</text>
 			</view>
 			<!-- #endif -->
-			<view class="btn-item one column">
+			<view class="btn-item one column" @click="openComment">
 				<text class="iconfont icon-edit"></text>
 				<text>评价</text>
 			</view>
 		</view>
-		
+
 		<!-- 分享组件 -->
 		<jh-share ref="share" :shareData="course"></jh-share>
+
+		<jh-comment ref="comment" @submitComment="submitComment"></jh-comment>
 	</view>
 </template>
 
@@ -131,13 +134,13 @@
 				// 1. 获取当前章的下一节课，如果有下一节课则播放下一节课
 				let chapter = this.chapterList[this.activeObj.chapterIndex]
 				let section = chapter && chapter.sectionList[this.activeObj.sectionIndex + 1]
-				if(section && section.videoUrl) {
+				if (section && section.videoUrl) {
 					// 播放当前章的下一节课
-					this.activeObj.sectionIndex++ 
+					this.activeObj.sectionIndex++
 					this.playSection(section)
 				} else {
 					chapter = this.chapterList[this.activeObj.chapterIndex + 1]
-					if(chapter && chapter.sectionList && chapter.sectionList.length > 0) {
+					if (chapter && chapter.sectionList && chapter.sectionList.length > 0) {
 						// 2. 当前章没有下一节课，就播放下一章的第一节课
 						this.activeObj.chapterIndex++
 						this.activeObj.sectionIndex = 0
@@ -153,7 +156,7 @@
 			},
 			// 播放指定视频
 			playSection(section) {
-				if(section) {
+				if (section) {
 					// 防止有播放的视频，先暂停再切换
 					videoContext.pause()
 					// 切换新课程
@@ -164,7 +167,7 @@
 				} else {
 					this.$util.msg('视频资源不存在')
 				}
-				
+
 			},
 			// #endif
 			// #ifdef APP-PLUS
@@ -180,8 +183,37 @@
 			},
 			share() {
 				this.$refs.share.showHandler()
-			}
+			},
 			// #endif
+			/**
+			 * 打开评论窗口
+			 */
+			openComment() {
+				this.$refs.comment.show()
+			},
+			/**
+			 * 提交评论内容
+			 * @param {Object} comment
+			 */
+			async submitComment(comment) {
+				uni.showLoading({
+					title: '提交中...',
+					mask: true
+				})
+
+				// 封装课程ID
+				comment.courseId = this.id
+				const res = await api.addCourseComment()
+				if(res.code === 20000) {
+					// 调用评论接口提交数据
+					uni.hideLoading()
+					comment.content = ''
+					this.$util.msg('评论成功')
+					this.$refs.comment.show()
+				} else {
+					this.$util.msg('评论失败')
+				}
+			}
 		}
 	}
 </script>
