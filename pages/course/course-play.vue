@@ -19,7 +19,7 @@
 		<!-- 底部按钮 -->
 		<view class="bottom center">
 			<!-- #ifdef APP-PLUS -->
-			<view class="btn-item one column">
+			<view class="btn-item one column" @click="share">
 				<text class="iconfont icon-Share-Outline"></text>
 				<text>分享</text>
 			</view>
@@ -29,6 +29,9 @@
 				<text>评价</text>
 			</view>
 		</view>
+		
+		<!-- 分享组件 -->
+		<jh-share ref="share" :shareData="course"></jh-share>
 	</view>
 </template>
 
@@ -174,6 +177,9 @@
 						activeObj: this.activeObj
 					}
 				})
+			},
+			share() {
+				this.$refs.share.showHandler()
 			}
 			// #endif
 		}
