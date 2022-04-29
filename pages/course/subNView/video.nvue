@@ -28,14 +28,15 @@
 					<!-- 暂停 -->
 					<text v-else class="video-btn iconfont" @click.stop="playVideo">&#xe62c;</text>
 					<!-- 下一节 -->
-					<text class="video-btn iconfont" @click.stop="playVideo">&#xe61b;</text>
+					<text class="video-btn iconfont" @click.stop="nextPlay">&#xe61b;</text>
 				</view>
 				<!-- 当前播放时长 -->
 				<text class="time">{{currentStr}}</text>
 				<!-- 进度条 -->
 				<view class="bottom-slider">
 					<slider-bar :duration="duration" :current="current" :sliderWidth="sliderWidth"
-						:direction="fullScreen ? 'screenY' : 'screenX'" :rate="parseFloat(currentRate)" @change="change"></slider-bar>
+						:direction="fullScreen ? 'screenY' : 'screenX'" :rate="parseFloat(currentRate)"
+						@change="change"></slider-bar>
 				</view>
 				<!-- 总时长 -->
 				<text class="time">{{durationStr}}</text>
@@ -70,10 +71,10 @@
 			return {
 				statusBarHeight: 0,
 				videoMidea: {
-					id: 1,
-					title: '1-1 项目需求分析项目需求',
-					mainImage: 'https://pics6.baidu.com/feed/0e2442a7d933c895ff4183829e8c4cfa830200b0.jpeg?token=02d84b8835896cf4af92fdd5fc822d8d',
-					videoUrl: 'https://vd3.bdstatic.com/mda-jkkgqi4rmyigr1gh/sc/mda-jkkgqi4rmyigr1gh.mp4',
+					id: null,
+					title: '',
+					mainImage: '',
+					videoUrl: '',
 				},
 				play: false, // 正在播放
 				showControls: true, // 显示空间按钮
@@ -85,6 +86,11 @@
 				rates: ['0.8', '1.0', '1.25', '1.5', '2.0'],
 				currentRate: '1.0', // 当前倍速
 				rateView: false, // 显示隐藏倍速窗口
+				chapterList: [], // 课程章节列表
+				activeObj: { // 列表选中的下标
+					chapterIndex: 0,
+					sectionIndex: 0
+				}
 			}
 		},
 		onLoad() {
@@ -93,6 +99,14 @@
 			this.controlsHeight = info.screenHeight
 			this.controlsWidth = info.screenWidth
 
+			// 监听其他页面传递的数据
+			uni.$on('video', this.videoHandlerEvent)
+
+		},
+		// 卸载页面会触发此方法
+		onUnload() {
+			// 卸载页面时，移除监听事件
+			uni.$off('video')
 		},
 		beforeCreate() {
 			// 引入图标
@@ -130,7 +144,33 @@
 		methods: {
 			// 视频播放结束后会回调该方法
 			nextPlay() {
-
+				// 1. 获取当前章的下一节课，如果有下一节课则播放下一节课
+				let chapter = this.chapterList[this.activeObj.chapterIndex]
+				let section = chapter && chapter.sectionList[this.activeObj.sectionIndex + 1]
+				if(section && section.videoUrl) {
+					// 播放当前章的下一节课
+					this.activeObj.sectionIndex++ 
+					this.playSection(section)
+				} else {
+					chapter = this.chapterList[this.activeObj.chapterIndex + 1]
+					if(chapter && chapter.sectionList && chapter.sectionList.length > 0) {
+						// 2. 当前章没有下一节课，就播放下一章的第一节课
+						this.activeObj.chapterIndex++
+						this.activeObj.sectionIndex = 0
+						section = chapter && chapter.sectionList[this.activeObj.sectionIndex]
+						// 播放视频
+						this.playSection(section)
+					} else {
+						// 3. 没有下一章，暂停视频，提示已观看到最后一节课
+						videoContext.pause();
+						uni.showToast({
+							title: '已观看最后一节课',
+							icon: 'none'
+						})
+						this.play = false
+						this.showControls = true
+					}
+				}
 			},
 			/**
 			 * 250ms触发一次该方法
@@ -218,6 +258,56 @@
 			 */
 			showHideRateView() {
 				this.rateView = !this.rateView
+			},
+			// course-play页面会传递数据进行触发到此方法
+			videoHandlerEvent(item) {
+				// console.log('接收到的数据:::', item)
+				switch (item.type) {
+					case 'init':
+						//初始数据
+						const course = item.params.course
+						this.videoMidea.mainImage = course.mainImage
+						this.videoMidea.id = course.id
+
+						this.chapterList = item.params.chapterList
+						this.activeObj = item.params.activeObj
+						// 获取第一节课
+						const chapter = this.chapterList[this.activeObj.chapterIndex]
+						const section = chapter && chapter.sectionList[this.activeObj.sectionIndex]
+						// console.log('section', section)
+						if (section) {
+							this.videoMidea.videoUrl = section.videoUrl || ''
+							this.videoMidea.title = section.name
+						}
+						break;
+					case 'change':
+						// 当前播放的下标，为了播放下一节课使用
+						this.activeObj = item.params.activeObj
+						this.playSection(item.params.section)
+						break;
+					default:
+						break;
+				}
+			},
+			// 播放指定视频
+			playSection(section) {
+				if(section) {
+					// 防止有播放的视频，先暂停再切换
+					videoContext.pause()
+					// 切换新课程
+					this.videoMidea.videoUrl = section.videoUrl || ''
+					this.videoMidea.title = section.name
+					setTimeout(() => {
+						videoContext.play()
+						this.play = true
+					}, 300)
+				} else {
+					uni.showToast({
+						title: '视频资源不存在',
+						icon: 'none'
+					})
+				}
+				
 			},
 			formatSeconds(totalSecond) {
 				let minute = parseInt(totalSecond / 60)

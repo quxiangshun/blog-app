@@ -1,7 +1,7 @@
 <template>
 	<view class="course-play">
 		<!-- #ifndef APP-PLUS -->
-		<video id="myVideo" style="width: 750rpx; height: 423rpx;" :poster="poster" :src="src"></video>
+		<video id="myVideo" style="width: 750rpx; height: 423rpx;" :poster="poster" :src="src" @ended="nextPlay"></video>
 		<!-- #endif -->
 
 		<!-- 课程标题与详情按钮 -->
@@ -43,8 +43,10 @@
 		},
 		data() {
 			return {
+				// #ifndef APP-PLUS
 				poster: 'https://pics6.baidu.com/feed/0e2442a7d933c895ff4183829e8c4cfa830200b0.jpeg?token=02d84b8835896cf4af92fdd5fc822d8d',
 				src: 'https://vd3.bdstatic.com/mda-jkkgqi4rmyigr1gh/sc/mda-jkkgqi4rmyigr1gh.mp4',
+				// #endif
 				id: null, //课程ID
 				course: {}, // 课程基本信息
 				chapterList: [], // 课程章节列表
@@ -73,7 +75,7 @@
 				// #ifndef APP-PLUS
 				this.poster = this.course.mainImage
 				const chapter = this.chapterList[this.activeObj.chapterIndex]
-				const section = chapter && chapter.section.sectionList[this.activeObj.sectionIndex]
+				const section = chapter && chapter.sectionList[this.activeObj.sectionIndex]
 				this.src = section && section.videoUrl || null
 				// #endif
 			},
@@ -94,6 +96,9 @@
 					data
 				} = await api.getCourseBuyList(this.id);
 				this.chapterList = data
+				// #ifdef APP-PLUS
+				this.sendData2Nvue()
+				// #endif
 			},
 			changeVideo(obj) {
 				this.activeObj = obj.activeObj
@@ -105,7 +110,72 @@
 					videoContext.play()
 				}, 300)
 				// #endif
+
+				// #ifdef APP-PLUS
+				// 切换课程播放
+				uni.$emit('video', {
+					type: 'change',
+					params: {
+						section: obj.section,
+						activeObj: this.activeObj
+					}
+				})
+				// #endif
+			},
+			// #ifndef APP-PLUS
+			// 视频播放结束后会回调该方法
+			nextPlay() {
+				// 1. 获取当前章的下一节课，如果有下一节课则播放下一节课
+				let chapter = this.chapterList[this.activeObj.chapterIndex]
+				let section = chapter && chapter.sectionList[this.activeObj.sectionIndex + 1]
+				if(section && section.videoUrl) {
+					// 播放当前章的下一节课
+					this.activeObj.sectionIndex++ 
+					this.playSection(section)
+				} else {
+					chapter = this.chapterList[this.activeObj.chapterIndex + 1]
+					if(chapter && chapter.sectionList && chapter.sectionList.length > 0) {
+						// 2. 当前章没有下一节课，就播放下一章的第一节课
+						this.activeObj.chapterIndex++
+						this.activeObj.sectionIndex = 0
+						section = chapter && chapter.sectionList[this.activeObj.sectionIndex]
+						// 播放视频
+						this.playSection(section)
+					} else {
+						// 3. 没有下一章，暂停视频，提示已观看到最后一节课
+						videoContext.pause();
+						this.$util.msg('已观看最后一节课')
+					}
+				}
+			},
+			// 播放指定视频
+			playSection(section) {
+				if(section) {
+					// 防止有播放的视频，先暂停再切换
+					videoContext.pause()
+					// 切换新课程
+					this.src = section.videoUrl || ''
+					setTimeout(() => {
+						videoContext.play()
+					}, 300)
+				} else {
+					this.$util.msg('视频资源不存在')
+				}
+				
+			},
+			// #endif
+			// #ifdef APP-PLUS
+			sendData2Nvue() {
+				uni.$emit('video', {
+					type: 'init',
+					params: {
+						course: this.course, // 课程信息
+						chapterList: this.chapterList, // 课程列表
+						activeObj: this.activeObj
+					}
+				})
 			}
+			// #endif
 		}
 	}
 </script>
