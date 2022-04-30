@@ -193,6 +193,15 @@
 				}
 			}
 		}
+        ,{
+            "path" : "pages/order/confirm-buy",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "确认购买",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

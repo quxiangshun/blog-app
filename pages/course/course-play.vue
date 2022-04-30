@@ -204,14 +204,14 @@
 				// 封装课程ID
 				comment.courseId = this.id
 				const res = await api.addCourseComment()
+				uni.hideLoading()
 				if(res.code === 20000) {
 					// 调用评论接口提交数据
-					uni.hideLoading()
 					comment.content = ''
 					this.$util.msg('评论成功')
 					this.$refs.comment.show()
 				} else {
-					this.$util.msg('评论失败')
+					this.$util.msg(res.message)
 				}
 			}
 		}

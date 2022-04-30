@@ -211,7 +211,7 @@
 				const isLogin = this.$util.isLogin({
 					nav: false
 				})
-				if (!isLogin) {
+				if (isLogin) {
 					const {
 						data
 					} = await api.getCourseIsBuy(this.id);
@@ -254,12 +254,12 @@
 			 * 点击底部按钮触发，从bottom-btn组件中传递的事件
 			 */
 			clickBottom() {
-				if (this.isBuy || course.isFree) {
+				if (this.isBuy || this.course.isFree) {
 					// 已购买或免费，跳转视频播放页
 					this.navTo(`/pages/course/course-play?id=${this.id}`)
 				} else {
 					// 未购买，跳转确认购买页面
-
+					this.navTo(`/pages/order/confirm-buy?course=${encodeURIComponent(JSON.stringify(this.course))}`)
 				}
 			},
 			// 关闭播放窗口

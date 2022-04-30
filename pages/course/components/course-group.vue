@@ -11,7 +11,7 @@
 						<text class="group-price">￥{{item.groupPrice}}</text>
 						<text class="total-price">￥{{item.totalPrice}}</text>
 					</view>
-					<text class="buy">购买套餐</text>
+					<text class="buy" @click="buyGroupHandler(item)">购买套餐</text>
 				</view>
 			</view>
 		</view>
@@ -56,6 +56,14 @@
 						]
 					}
 				]
+			}
+		},
+		methods: {
+			/**
+			 * 购买套餐
+			 */
+			buyGroupHandler(item) {
+				this.navTo(`/pages/order/confirm-buy?groupCourse=${encodeURIComponent(JSON.stringify(item))}`)
 			}
 		}
 	}
