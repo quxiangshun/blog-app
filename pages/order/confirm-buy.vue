@@ -15,7 +15,7 @@
 			<!-- APP端的IOS设备上显示 -->
 			<view v-if="isIOS" class="ios">
 				<text>余额：</text>
-				<text>0.00币（不足支付）</text>
+				<text>{{balance}}币{{isPay ? '' : '（不足支付）'}}</text>
 			</view>
 
 			<!-- 非APP端的IOS设备上显示 -->
@@ -59,11 +59,11 @@
 		<view class="pay space-between">
 			<view class="">
 				<text class="grey">实付金额：</text>
-				<text>￥{{course.priceDiscount || course.groupPrice || course.priceOriginal || course.totalPrice}}</text>
+				<text>￥{{payPrice}}</text>
 			</view>
 			<view class="">
 				<button v-if="isIOS" class="btn" :loading="loading" :disabled="loading"
-					@click="iosPayHandler">充值并支付</button>
+					@click="iosPayHandler">{{isPay ? '立即' : '充值并'}}支付</button>
 				<!-- #ifdef MP-WEIXIN -->
 				<button v-else class="btn" :loading="loading" :disabled="loading" @click="wxPayHandler">提交订单</button>
 				<!-- #endif -->
@@ -77,6 +77,7 @@
 
 <script>
 	import courseItem from '@/components/common/course-item.vue'
+	import api from '@/api/order.js'
 	export default {
 		components: {
 			courseItem
@@ -84,10 +85,23 @@
 		data() {
 			return {
 				course: {}, // 课程信息(此处信息数据结构不一致，一种是商品，一种是套餐)
+				// #ifdef APP-PLUS
 				isIOS: false, // 是否为APP端的IOS设备
+				balance: 0, // IOS设备余额
+				// #endif
 				provider: 'alipay', // 支付方式
 				loading: false, // 是否提交
 
+			}
+		},
+		computed: {
+			payPrice() {
+				// 支付金额
+				return this.course.priceDiscount || this.course.groupPrice || this.course.priceOriginal || this.course
+					.totalPrice
+			},
+			isPay() {
+				return this.balance >= this.payPrice
 			}
 		},
 		onLoad(option) {
@@ -108,14 +122,71 @@
 
 			// #ifdef APP-PLUS
 			this.isIOS = uni.getSystemInfoSync().platform === 'ios'
+			if (this.isIOS) {
+				this.getUserBalance()
+			}
 			// #endif
 		},
 		methods: {
-			radioChange() {
-
+			// #ifdef APP-PLUS
+			// 查询余额
+			async getUserBalance() {
+				const {
+					data
+				} = await api.getUserBalance();
+				this.balance = data
 			},
 			// APPLE应用类支付
-			iosPayHandler() {
+			async iosPayHandler() {
+				// 1. 支付金额 this.payPrice
+				const price = this.payPrice
+				// 2. 课程的IDs（购买单个课程或者课程套餐）
+				let courseIds = []
+				if (this.course.list) {
+					this.course.list.forEach(item => {
+						courseIds.push(item.id)
+					})
+				} else {
+					courseIds.push(this.course.id)
+				}
+				const data = {
+					price,
+					courseIds
+				}
+				// 3. 余额不足，跳转服务充值页面
+				if (!this.isPay) {
+					this.navTo(`/pages/order/my-balance?params=${JSON.stringify(data)}`)
+					return
+				}
+				// 4. 调用服务支付接口
+				this.loading = true
+				uni.showLoading({
+					title: '支付中',
+					mask: true
+				})
+				const res = await api.orderPayIOS(data)
+				uni.hideLoading()
+				// 5. 刷新当前月（跳转到订单页）
+				if (res.code === 20000) {
+					this.getUserBalance()
+					uni.showModal({
+						content: '支付完成，立即学习',
+						showCancel: false,
+						success: () => {
+							// 跳转到订单页
+							this.navTo(`/pages/order/order`)
+						}
+					})
+				} else {
+					uni.showModal({
+						content: '支付失败，原因' + res.message,
+						showCancel: false
+					})
+				}
+				this.loading = false
+			},
+			// #endif
+			radioChange() {
 
 			},
 			// 微信小程序支付
@@ -125,7 +196,8 @@
 			// 安卓端APP支付
 			payHandler() {
 
-			}
+			},
+
 		}
 	}
 </script>
