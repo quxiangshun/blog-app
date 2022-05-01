@@ -85,10 +85,8 @@
 		data() {
 			return {
 				course: {}, // 课程信息(此处信息数据结构不一致，一种是商品，一种是套餐)
-				// #ifdef APP-PLUS
 				isIOS: false, // 是否为APP端的IOS设备
 				balance: 0, // IOS设备余额
-				// #endif
 				provider: 'alipay', // 支付方式
 				loading: false, // 是否提交
 

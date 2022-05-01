@@ -2,15 +2,15 @@
 	<view>
 		<view class="money column center">
 			<text>余额</text>
-			<text>0.00币</text>
+			<text>{{parseFloat(balance).toFixed(2)}}币</text>
 		</view>
 		<view class="recharge">
 			<view>充值</view>
 			<view class="list">
 				<!-- 此处不要使用item：app端是1开始，小程序是0开始 -->
-				<view v-for="(item, index) in 6" :key="index">
-					<view>{{index + index}}00币</view>
-					<view>￥{{index + index}}00</view>
+				<view :class="{active: index === activeIndex}" v-for="(item, index) in moneyList" :key="index" @click="clickItem(item, index)">
+					<view>{{item}}币</view>
+					<view>￥{{item}}</view>
 				</view>
 			</view>
 		</view>
@@ -33,13 +33,57 @@
 </template>
 
 <script>
+	import api from '@/api/order.js'
 	export default {
 		data() {
 			return {
-				loading: false
+				loading: false,
+				activeIndex: 0, // 选中的金额下标, 
+				price: 0, // 支付金额
+				courseIds: [], // 选中的课程IDs
+				balance: 0, // 余额
+				applePrice: 0, // 需要充值的金额
+				moneyList: [], // 页面渲染的金额
+			}
+		},
+		onLoad(option) {
+			if (option.params) {
+				const params = JSON.parse(option.params)
+				// 1. 接收页面传递过来的参数：支付金额和课程IDs
+				this.price = params.price
+				this.courseIds = params.courseIds
+				// 2. 查询余额
+				this.loadData()
+
 			}
 		},
 		methods: {
+			async loadData() {
+				// 查询余额
+				const {
+					data
+				} = await api.getUserBalance()
+				this.balance = data
+				// 3. 计算还差多少金额，则充值多少（取整）
+				if (this.price) {
+					// apple设备充值金额=余额balance - 付款金额price
+					const applePrice = this.balance - this.price
+					// cell 向上取整， abs取绝对值
+					this.applePrice = Math.ceil(Math.abs(applePrice))
+				}
+				// 4. 充值列表展示金额
+				for (let i = 0; i < 6; i++) {
+					this.moneyList.push(this.applePrice + (i * 30))
+				}
+			},
+			/**
+			 * @param {Object} item 金额
+			 * @param {Object} index 金额对应的下标
+			 */
+			clickItem(item, index) {
+				this.activeIndex = index
+				this.applePrice = item
+			},
 			iosPayHandler() {
 
 			}
@@ -101,7 +145,7 @@
 			padding-top: 50rpx;
 			padding-bottom: 30rpx;
 		}
-		
+
 		view: last-child {
 			padding-bottom: 130rpx
 		}
@@ -115,7 +159,7 @@
 		background-color: #FFFFFF;
 		height: 100rpx;
 		border-top: $jh-underline;
-	
+
 		.btn {
 			width: 700rpx;
 			background-color: #345DC2;
@@ -124,10 +168,14 @@
 			color: #FFFFFF;
 			border-radius: 50rpx;
 			line-height: 80rpx;
-			
+
 			&::after {
 				border: none;
 			}
 		}
+	}
+
+	.active {
+		box-shadow: 0 0 0 0.5px $jh-text-color-red;
 	}
 </style>
