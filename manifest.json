@@ -17,7 +17,9 @@
             "delay" : 0
         },
         /* 模块配置 */
-        "modules" : {},
+        "modules" : {
+            "Payment" : {}
+        },
         /* 应用发布信息 */
         "distribute" : {
             /* android打包配置 */
@@ -43,7 +45,16 @@
             /* ios打包配置 */
             "ios" : {},
             /* SDK配置 */
-            "sdkConfigs" : {}
+            "sdkConfigs" : {
+                "payment" : {
+                    "weixin" : {
+                        "__platform__" : [ "ios", "android" ],
+                        "appid" : "wxe91205f728c4d83d",
+                        "UniversalLinks" : ""
+                    },
+                    "appleiap" : {}
+                }
+            }
         }
     },
     /* 快应用特有相关 */
@@ -69,19 +80,19 @@
         "enable" : false
     },
     "vueVersion" : "2",
-	"h5": {
-		// 开发环境配置解决跨域问题：注意如果在vue.config.js中也配置跨域解决，此处配置会覆盖vue.config.js中的配置
-		// "devServer": {
-		// 	"proxy": {
-		// 		"/api": {
-		// 			// h5 配置代理
-		// 			"target": "https://mock.mengxuegu.com/mock/625d531166abf914b1f1c07a/jh-app",
-		// 			"pathRewrite": {
-		// 				// 将请求地址 /api 替换为 ”“
-		// 				"^/api": ""
-		// 			}
-		// 		}
-		// 	}
-		// }
-	}
+    "h5" : {}
 }
+// 开发环境配置解决跨域问题：注意如果在vue.config.js中也配置跨域解决，此处配置会覆盖vue.config.js中的配置
+// "devServer": {
+// 	"proxy": {
+// 		"/api": {
+// 			// h5 配置代理
+// 			"target": "https://mock.mengxuegu.com/mock/625d531166abf914b1f1c07a/jh-app",
+// 			"pathRewrite": {
+// 				// 将请求地址 /api 替换为 ”“
+// 				"^/api": ""
+// 			}
+// 		}
+// 	}
+// }
+

@@ -19,5 +19,29 @@ export default {
 			method: 'POST',
 			data
 		})
+	},
+	
+	/**
+	 * 获取生成的订单信息-微信支付
+	 * @param {Object} data
+	 */
+	getOrderInfoWxpay(data) {
+		return request({
+			url: '/pay/orderInfo/wxpay',
+			method: 'POST',
+			data
+		})
+	},
+	
+	/**
+	 * 获取生成的订单信息-支付宝支付
+	 * @param {Object} data
+	 */
+	getOrderInfoAlipay(data) {
+		return request({
+			url: '/pay/orderInfo/alipay',
+			method: 'POST',
+			data
+		})
 	}
 }

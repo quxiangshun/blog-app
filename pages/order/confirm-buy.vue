@@ -65,10 +65,10 @@
 				<button v-if="isIOS" class="btn" :loading="loading" :disabled="loading"
 					@click="iosPayHandler">{{isPay ? '立即' : '充值并'}}支付</button>
 				<!-- #ifdef MP-WEIXIN -->
-				<button v-else class="btn" :loading="loading" :disabled="loading" @click="wxPayHandler">提交订单</button>
+				<button v-else class="btn" :loading="loading" :disabled="loading" @click="wxPayHandler">立即支付</button>
 				<!-- #endif -->
 				<!-- #ifndef MP-WEIXIN -->
-				<button v-else class="btn" :loading="loading" :disabled="loading" @click="payHandler">提交订单</button>
+				<button v-else class="btn" :loading="loading" :disabled="loading" @click="payHandler">立即支付</button>
 				<!-- #endif -->
 			</view>
 		</view>
@@ -85,6 +85,7 @@
 		data() {
 			return {
 				course: {}, // 课程信息(此处信息数据结构不一致，一种是商品，一种是套餐)
+				courseIds: [], // 课程IDs
 				isIOS: false, // 是否为APP端的IOS设备
 				balance: 0, // IOS设备余额
 				provider: 'alipay', // 支付方式
@@ -124,6 +125,7 @@
 				this.getUserBalance()
 			}
 			// #endif
+			this.getCourseIds()
 		},
 		methods: {
 			// #ifdef APP-PLUS
@@ -139,17 +141,9 @@
 				// 1. 支付金额 this.payPrice
 				const price = this.payPrice
 				// 2. 课程的IDs（购买单个课程或者课程套餐）
-				let courseIds = []
-				if (this.course.list) {
-					this.course.list.forEach(item => {
-						courseIds.push(item.id)
-					})
-				} else {
-					courseIds.push(this.course.id)
-				}
 				const data = {
 					price,
-					courseIds
+					courseIds: this.courseIds
 				}
 				// 3. 余额不足，跳转服务充值页面
 				if (!this.isPay) {
@@ -184,18 +178,88 @@
 				this.loading = false
 			},
 			// #endif
-			radioChange() {
-
+			/**
+			 * 切换支付提供商
+			 * @param {Object} event
+			 */
+			radioChange(event) {
+				this.provider = event.detail.value
 			},
 			// 微信小程序支付
 			wxPayHandler() {
 
 			},
 			// 安卓端APP支付
-			payHandler() {
+			async payHandler() {
+				this.loading = true
+				// #ifdef APP-PLUS
+				// 1. 获取订单信息
+				const orderInfo = await this.getOrderInfo()
+				if (!orderInfo) {
+					uni.showModal({
+						content: '获取订单信息失败',
+						showCancel: false
+					})
+					return
+				}
+				// 2. 发送支付请求
+				uni.requestPayment({
+					provider: this.provider,
+					orderInfo: orderInfo,
+					success: (e) => {
+						uni.showModal({
+							content: '支付成功!',
+							showCancel: false
+						})
+						// 跳转到订单页面
+					},
+					fail: (e) => {
+						console.log('支付失败', e)
+						uni.showModal({
+							content: '支付失败!',
+							showCancel: false
+						})
+					},
+					complete: () => {
+						this.loading = false
+					}
+				})
+				// #endif
 
+				// #ifdef H5
+				// H5的支付逻辑需要单独实现
+				// #endif
 			},
-
+			getOrderInfo() {
+				return new Promise(async (resolve, reject) => {
+					// 提交给后台的数据（字形扩展），用于后台校验订单数据以及课程金额是否正确
+					let data = {
+						courseIds: this.courseIds
+					}
+					let res;
+					if (this.provider === 'alipay') {
+						res = await api.getOrderInfoAlipay(data)
+					} else if (this.provider === 'wxpay') {
+						res = await api.getOrderInfoWxpay(data)
+					}
+					if (res.code === 20000) {
+						resolve(res.data)
+					} else {
+						reject(new Error('获取支付信息失败，原因：' + res.message))
+					}
+				})
+			},
+			getCourseIds() {
+				let courseIds = []
+				if (this.course.list) {
+					this.course.list.forEach(item => {
+						courseIds.push(item.id)
+					})
+				} else {
+					courseIds.push(this.course.id)
+				}
+				this.courseIds = courseIds;
+			}
 		}
 	}
 </script>
