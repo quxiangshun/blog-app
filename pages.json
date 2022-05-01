@@ -202,6 +202,24 @@
             }
             
         }
+        ,{
+            "path" : "pages/order/my-balance",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "我的余额",
+				"navigationBarBackgroundColor": "#345DC2",
+				"navigationBarTextStyle": "white",
+				// 下拉回弹背景色
+				"backgroundColor": "#345DC2",
+				// 上拉回弹背景色
+				"backgroundColorBottom": "#345DC2",
+				"app-plus": {
+					// 禁用滚动条
+					"scrollIndicator": "none"
+				}
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
