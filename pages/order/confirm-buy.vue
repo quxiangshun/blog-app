@@ -236,7 +236,8 @@
 					...orderInfo,
 					success: (res) => {
 						this.$util.msg('支付成功!')
-						// TODO 跳转到订单页
+						// 跳转到订单页
+						this.navTo(`/pages/order/order`)
 					},
 					fail: (err) => {
 						uni.showModal({
@@ -272,7 +273,8 @@
 							content: '支付成功!',
 							showCancel: false
 						})
-						// 跳转到订单页面
+						// 跳转到订单页
+						this.navTo(`/pages/order/order`)
 					},
 					fail: (e) => {
 						console.log('支付失败', e)

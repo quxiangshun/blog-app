@@ -116,7 +116,7 @@
 					},
 					success: async (e) => {
 						this.$util.msg('支付成功')
-						// TODO 调用接口，立即扣款进行购买
+						// 调用接口，立即扣款进行购买
 						const res = await api.orderPayIOS(data)
 						// 5. 刷新当前月（跳转到订单页）
 						if (res.code === 20000) {

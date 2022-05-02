@@ -55,5 +55,14 @@ export default {
 			method: 'POST',
 			data
 		})
-	}
+	},
+	
+	/**
+	 * 查询用户订单列表
+	 */
+	getUserOrderList() {
+		return request({
+			url: '/pay/order/user/list'
+		})
+	},
 }
