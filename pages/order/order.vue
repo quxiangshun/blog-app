@@ -28,6 +28,24 @@
 			</view>
 		</view>
 
+		<view v-if="isIOS && isShow" class="mask" @touchmove.stop.prevent="()=>{}" catchtouchmove="true"></view>
+
+		<view v-if="isIOS && isShow" class="bottom-ios bottom-fixed" @touchmove.stop.prevent="()=>{}"
+			catchtouchmove="true">
+			<view class="title center">
+				<text>确定支付</text>
+				<text @click="showHidePay">取消</text>
+			</view>
+			<view class="price space-between">
+				<text>支付金额</text>
+				<text>{{payPrice}}</text>
+			</view>
+			<view class="price space-between">
+				<text>当前余额</text>
+				<text>{{balance}}</text>
+			</view>
+			<button @click="iosPay" class="btn" :loading="loading" :disabled="loading">{{isPay ? '立即支付' : '余额不足，立即充值'}}</button>
+		</view>
 	</view>
 </template>
 
@@ -40,11 +58,29 @@
 		},
 		data() {
 			return {
-				orderList: []
+				orderList: [],
+				isIOS: false, // 是否为APP端的IOS设备
+				isShow: false, // 显示ios支付窗口
+				balance: 0, // IOS设备余额
+				currentOrder: {}, // 当前应付订单
+				loading: false,
 			}
 		},
 		onLoad() {
+			// #ifdef APP-PLUS
+			this.isIOS = uni.getSystemInfoSync().platform === 'ios'
+			// #endif
+
 			this.loadData()
+		},
+		computed: {
+			payPrice() {
+				// 支付金额
+				return this.currentOrder.priceDiscount || this.currentOrder.pricePayable
+			},
+			isPay() {
+				return this.balance >= this.payPrice
+			}
 		},
 		methods: {
 			loadData() {
@@ -79,7 +115,21 @@
 					}
 				})
 			},
-			orderPay(item) {
+			async orderPay(item) {
+				if (this.isIOS) {
+					this.loading = true
+					this.currentOrder = item
+					// 是app端ios平台，则弹出
+					this.showHidePay()
+					// 查询余额
+					const {
+						data
+					} = await api.getUserBalance()
+					this.balance = data
+					this.loading = false
+				} else {
+					// 非app端ios，则跳转到订单支付页面
+				}
 
 			},
 			/**
@@ -101,6 +151,44 @@
 						}
 					}
 				})
+			},
+			showHidePay() {
+				this.isShow = !this.isShow
+			},
+			/**
+			 * ios弹窗中点击的按钮
+			 */
+			async iosPay() {
+				const data = {
+					price: this.payPrice,
+					orderId: this.currentOrder.orderId
+				}
+				if(this.isPay) {
+					// 余额充足，直接支付
+					this.loading = true
+					uni.showLoading({
+						title: '支付中，请勿离开此页面',
+						mask: true
+					})
+					const res = await api.orderPayIOS(data)
+					uni.hideLoading()
+					// 支付成功，关闭弹窗
+					this.showHidePay()
+					if(res.code === 20000) {
+						uni.showToast({
+							title: '支付成功'
+						})
+						this.loadData()
+					} else {
+						uni.showModal({
+							content: '支付失败，请重试！原因：' + res.message,
+							showCancel: false
+						})
+					}
+				} else {
+					// 余额不足，跳转到我的余额，进行充值
+					this.navTo(`/pages/order/my-balance?params=${JSON.stringify(data)}`)
+				}
 			}
 		}
 	}
@@ -140,6 +228,50 @@
 
 			.grey {
 				color: $jh-text-color-grey;
+			}
+		}
+	}
+
+	.bottom-ios {
+		padding: 30rpx 40rpx;
+		border-top: $jh-underline;
+
+		.title {
+			font-size: 38rpx;
+			margin-bottom: 20rpx;
+			text-align: center;
+
+			text:first-child {
+				flex: 1;
+				margin-left: 70rpx;
+			}
+
+			text:last-child {
+				color: $jh-text-color-grey;
+				font-size: 35rpx;
+			}
+		}
+
+		.price {
+			font-size: 30rpx;
+			line-height: 90rpx;
+
+			text:last-child {
+				color: $jh-text-color-red;
+			}
+		}
+
+		.btn {
+			background-color: $jh-color-primary;
+			color: #FFFFFF;
+			border-radius: 50rpx;
+			line-height: 80rpx;
+			font-size: 30rpx;
+			margin-top: 20rpx;
+
+			// loading状态会有一个边框，移除后加载的边框
+			&::after {
+				border: none;
 			}
 		}
 	}

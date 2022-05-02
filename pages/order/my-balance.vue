@@ -35,9 +35,7 @@
 
 <script>
 	// 支付渠道  苹果内部
-	let iapChannel = null,
-		productId = 'HelloUniappPayment1',
-		productIds = ['HelloUniappPayment1', 'HelloUniappPayment6'];
+	let iapChannel = null
 
 	import api from '@/api/order.js'
 	export default {
@@ -51,6 +49,7 @@
 				balance: 0, // 余额
 				applePrice: 0, // 需要充值的金额
 				moneyList: [], // 页面渲染的金额
+				orderId: null, // 订单ID
 			}
 		},
 		onLoad(option) {
@@ -59,6 +58,7 @@
 				// 1. 接收页面传递过来的参数：支付金额和课程IDs
 				this.price = params.price
 				this.courseIds = params.courseIds
+				this.orderId = params.orderId
 				// 2. 查询余额
 				this.loadData()
 
@@ -115,8 +115,12 @@
 						productid: this.applePrice
 					},
 					success: async (e) => {
-						this.$util.msg('支付成功')
+						this.$util.msg('充值成功，并支付')
 						// 调用接口，立即扣款进行购买
+						const data = {
+							price,
+							orderId: this.orderId
+						}
 						const res = await api.orderPayIOS(data)
 						// 5. 刷新当前月（跳转到订单页）
 						if (res.code === 20000) {
