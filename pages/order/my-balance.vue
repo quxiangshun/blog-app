@@ -8,7 +8,8 @@
 			<view>充值</view>
 			<view class="list">
 				<!-- 此处不要使用item：app端是1开始，小程序是0开始 -->
-				<view :class="{active: index === activeIndex}" v-for="(item, index) in moneyList" :key="index" @click="clickItem(item, index)">
+				<view :class="{active: index === activeIndex}" v-for="(item, index) in moneyList" :key="index"
+					@click="clickItem(item, index)">
 					<view>{{item}}币</view>
 					<view>￥{{item}}</view>
 				</view>
@@ -27,17 +28,23 @@
 			</view>
 		</view>
 		<view class="bottom center">
-			<button class="btn" :loading="loading" :disabled="loading" @click="iosPayHandler">立即充值</button>
+			<button class="btn" :loading="loading" :disabled="disabled" @click="iosPayHandler">立即充值</button>
 		</view>
 	</view>
 </template>
 
 <script>
+	// 支付渠道  苹果内部
+	let iapChannel = null,
+		productId = 'HelloUniappPayment1',
+		productIds = ['HelloUniappPayment1', 'HelloUniappPayment6'];
+
 	import api from '@/api/order.js'
 	export default {
 		data() {
 			return {
 				loading: false,
+				disabled: true, // 禁用按钮（苹果支付前需要检查环境
 				activeIndex: 0, // 选中的金额下标, 
 				price: 0, // 支付金额
 				courseIds: [], // 选中的课程IDs
@@ -55,6 +62,22 @@
 				// 2. 查询余额
 				this.loadData()
 
+				// 获取渠道苹果内部支付
+				plus.payment.getChannels((channels) => {
+					console.log("获取到channel" + JSON.stringify(channels))
+					for (var i in channels) {
+						var channel = channels[i];
+						if (channel.id === 'appleiap') {
+							iapChannel = channel;
+							this.requestOrder();
+						}
+					}
+					if (!iapChannel) {
+						this.errorMsg()
+					}
+				}, (error) => {
+					this.errorMsg()
+				});
 			}
 		},
 		methods: {
@@ -85,7 +108,68 @@
 				this.applePrice = item
 			},
 			iosPayHandler() {
-
+				this.loading = true;
+				uni.requestPayment({
+					provider: 'appleiap',
+					orderInfo: {
+						productid: this.applePrice
+					},
+					success: async (e) => {
+						this.$util.msg('支付成功')
+						// TODO 调用接口，立即扣款进行购买
+						const res = await api.orderPayIOS(data)
+						// 5. 刷新当前月（跳转到订单页）
+						if (res.code === 20000) {
+							this.getUserBalance()
+							uni.showModal({
+								content: '支付完成，立即学习',
+								showCancel: false,
+								success: () => {
+									// 跳转到订单页
+									this.navTo(`/pages/order/order`)
+								}
+							})
+						} else {
+							uni.showModal({
+								content: '支付失败，原因' + res.message,
+								showCancel: false
+							})
+						}
+					},
+					fail: (e) => {
+						uni.showModal({
+							content: "支付失败,原因为: " + e.errMsg,
+							showCancel: false
+						})
+					},
+					complete: () => {
+						console.log("payment结束")
+						this.loading = false;
+					}
+				})
+			},
+			/**
+			 * 苹果检查支付环境
+			 */
+			requestOrder() {
+				uni.showLoading({
+					title: '检测支付环境...'
+				})
+				iapChannel.requestOrder(this.moneyList, (orderList) => { //必须调用此方法才能进行 iap 支付
+					this.disabled = false;
+					// console.log('requestOrder success666: ' + JSON.stringify(orderList));
+					uni.hideLoading();
+				}, (e) => {
+					// console.log('requestOrder failed: ' + JSON.stringify(e));
+					uni.hideLoading();
+					this.errorMsg()
+				});
+			},
+			errorMsg() {
+				uni.showModal({
+					content: "暂不支持苹果 iap 支付",
+					showCancel: false
+				})
 			}
 		}
 	}
