@@ -56,13 +56,33 @@ export default {
 			data
 		})
 	},
-	
+
 	/**
 	 * 查询用户订单列表
 	 */
 	getUserOrderList() {
 		return request({
 			url: '/pay/order/user/list'
+		})
+	},
+	/**
+	 * 删除订单
+	 * @param {Object} orderId
+	 */
+	deleteOrder(orderId) {
+		return request({
+			url: `/pay/order/${orderId}`,
+			method: 'DELETE'
+		})
+	},
+	/**
+	 * 取消订单
+	 * @param {Object} orderId
+	 */
+	cancelOrder(orderId) {
+		return request({
+			url: `/pay/order/cancel/${orderId}`,
+			method: 'PUT'
 		})
 	},
 }
