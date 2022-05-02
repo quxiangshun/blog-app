@@ -20,7 +20,7 @@ export default {
 			data
 		})
 	},
-	
+
 	/**
 	 * 获取生成的订单信息-微信支付
 	 * @param {Object} data
@@ -32,7 +32,19 @@ export default {
 			data
 		})
 	},
-	
+
+	/**
+	 * 获取生成的订单信息-微信小程序支付
+	 * @param {Object} data
+	 */
+	getOrderInfoWxmppay(data) {
+		return request({
+			url: '/pay/orderInfo/wxmppay',
+			method: 'POST',
+			data
+		})
+	},
+
 	/**
 	 * 获取生成的订单信息-支付宝支付
 	 * @param {Object} data

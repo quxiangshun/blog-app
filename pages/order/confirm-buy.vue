@@ -185,8 +185,69 @@
 			radioChange(event) {
 				this.provider = event.detail.value
 			},
+			/**
+			 * 登录微信小程序，获取用户的openid
+			 */
+			loginWeixinMp() {
+				return new Promise((resolve, reject) => {
+					// 1. 登录微信小程序，获取code
+					uni.login({
+						provider: 'weixin',
+						success: async (res) => {
+							console.log('res', res.code)
+							// 2. 童工code，调用后台服务接口，获取openid
+							// TODO
+							// const openid = await api.getUserOpenid()
+							const openid = 'xxxxxxx'
+							// 把openid放到本地，可以避免每次调用支付的时候都去获取openid
+							uni.setStorageSync('openid', openid)
+							resolve(openid)
+						},
+						fail: (err) => {
+							reject(err)
+						}
+					})
+				})
+			},
 			// 微信小程序支付
-			wxPayHandler() {
+			async wxPayHandler() {
+				this.loading = true
+				let openid = uni.getStorageInfoSync('openid')
+				if (!openid) {
+					try {
+						openid = await this.loginWeixinMp()
+					} catch (e) {
+						console.error(e)
+					}
+					if (!openid) {
+						uni.showModal({
+							content: '获取openid失败',
+							showCancel: false
+						})
+						this.loading = false
+						return
+					}
+				}
+
+				// 3. 通过openid调用后台服务接口获取订单信息
+				const orderInfo = await this.getOrderInfo(openid)
+				// 4. 发起支付
+				uni.requestPayment({
+					...orderInfo,
+					success: (res) => {
+						this.$util.msg('支付成功!')
+						// TODO 跳转到订单页
+					},
+					fail: (err) => {
+						uni.showModal({
+							content: '支付失败!，原因：' + err.errMsg,
+							showCancel: false
+						})
+					},
+					complete: () => {
+						this.loading = false
+					}
+				})
 
 			},
 			// 安卓端APP支付
@@ -230,16 +291,21 @@
 				// H5的支付逻辑需要单独实现
 				// #endif
 			},
-			getOrderInfo() {
+			getOrderInfo(openid) {
 				return new Promise(async (resolve, reject) => {
+
 					// 提交给后台的数据（字形扩展），用于后台校验订单数据以及课程金额是否正确
 					let data = {
 						courseIds: this.courseIds
 					}
 					let res;
-					if (this.provider === 'alipay') {
+					// 如果openid有意义，则是微信小程序发送请求到服务端获取订单信息
+					if (openid) {
+						data.openid = openid
+						res = await api.getOrderInfoWxmppay(data)
+					} else if (!openid && this.provider === 'alipay') {
 						res = await api.getOrderInfoAlipay(data)
-					} else if (this.provider === 'wxpay') {
+					} else if (!openid && this.provider === 'wxpay') {
 						res = await api.getOrderInfoWxpay(data)
 					}
 					if (res.code === 20000) {
