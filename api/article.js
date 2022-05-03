@@ -17,5 +17,34 @@ export default {
 				size
 			}
 		})
-	}
+	},
+	/**
+	 * 查询文章详情数据接口
+	 * @param {Object} articleId
+	 */
+	getById(articleId) {
+		return request({
+			url: `/article/api/article/${articleId}`
+		})
+	},
+	/**
+	 * 根据文章ID获取评论列表
+	 * @param {Object} articleId
+	 */
+	getArticleCommentById(articleId) {
+		return request({
+			url: `/article/api/commetn/list/${articleId}`
+		})
+	},
+	/**
+	 * 新增文章评论接口
+	 * @param {Object} data
+	 */
+	addArticleComment(data) {
+		return request({
+			url: '/article/api/article/search',
+			method: 'POST',
+			data
+		})
+	},
 }

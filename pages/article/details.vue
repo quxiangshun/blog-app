@@ -1,46 +1,46 @@
 <template>
 	<view>
 		<view class="tag-list row">
-			<uni-tag class="tag-view" text="xxx" type="primary" size="small" circle="true" :inverted="true"></uni-tag>
-			<uni-tag class="tag-view" text="xxx" type="primary" size="small" circle="true" :inverted="true"></uni-tag>
+			<uni-tag class="tag-view" :text="item.name" type="primary" size="small" circle="true" :inverted="true"
+				v-for="(item, index) in detailData.labelList" :key="index"></uni-tag>
 		</view>
-		
+
 		<view class="content-main">
-			<text class="title">问答列表功能实现</text>
+			<text class="title">{{detailData.title}}</text>
 			<view class="info">
 				<view class="author center">
-					<image src="../../static/images/banner1.jpg" mode=""></image>
-					<text>xxxx</text>
+					<image :src="detailData.userImage || '/static/logo.png'" mode=""></image>
+					<text>{{detailData.nickName}}</text>
 				</view>
-				<text> · 2022-09-11</text>
-				<text> · 199人阅读</text>
+				<text> · {{$util.dateFormat(detailData.updateDate)}}</text>
+				<text> · {{detailData.viewCount}}人阅读</text>
 			</view>
 			<!-- 文章内容 -->
 			<!-- #ifdef MP -->
 			<!-- nodes 是html代码字符串 -->
-			<rich-text selectable="true" nodes="<h2 style='color:red'>内容</h2>"></rich-text>
+			<rich-text class="markdown-body" selectable="true" :nodes="detailData.htmlContent"></rich-text>
 			<!-- #endif -->
 			<!-- #ifndef MP -->
-			<text selectable="true" v-html="`<h2 style='color:blue'>内容</h2>`"></text>
+			<text class="markdown-body" selectable="true" v-html="detailData.htmlContent"></text>
 			<!-- #endif -->
 		</view>
-		
+
 		<view class="footer">
 			<view class="comment">
 				<view class="footer-header">热门评论</view>
-				<view class="comment-item row">
-					<image src="../../static/images/banner2.jpg"></image>
+				<view class="comment-item row" v-for="(item, index) in commentList" :key="index">
+					<image :src="item.userImage || '/static/logo.png'"></image>
 					<view class="comment-right">
 						<view class="info space-between center">
-							<text>xxxxx</text>
-							<text>2022-08-09</text>
+							<text>{{item.nickName}}</text>
+							<text>{{$util.dateFormat(item.createDate)}}</text>
 						</view>
-						<text class="content">评论内容</text>
+						<text class="content">{{item.content}}</text>
 					</view>
 				</view>
 			</view>
 		</view>
-		
+
 		<!-- 评论区 -->
 		<view class="bottom center" @touchmove.stop.prevent="()=>{}">
 			<textarea class="textarea" placeholder="有何高见,展开讲讲..."></textarea>
@@ -50,17 +50,46 @@
 </template>
 
 <script>
+	import api from '@/api/article.js'
 	export default {
 		data() {
 			return {
 				id: null, // 文章ID
+				detailData: {}, // 详情数据
+				commentList: [], // 评论列表
 			}
 		},
 		onLoad(option) {
 			this.id = option.id
+			this.getDetails()
+			this.loadCommentList()
 		},
 		methods: {
-			
+			/**
+			 * 查询文章详情
+			 */
+			async getDetails() {
+				const {
+					data
+				} = await api.getById(this.id)
+				// 把标题设置到导航标题上
+				uni.setNavigationBarTitle({
+					title: data.title
+				})
+				// 图片在H5和小程序太大了，通过以下方式处理
+				data.htmlContent = data.htmlContent.replace(/\<img/gi, '<img style="width:100%;height:auto"')
+				
+				this.detailData = data
+			},
+			/**
+			 * 查询文章评论列表
+			 */
+			async loadCommentList() {
+				const {
+					data
+				} = await api.getArticleCommentById(this.id)
+				this.commentList = data
+			}
 		}
 	}
 </script>
@@ -68,33 +97,38 @@
 <style lang="scss">
 	@import url('@/common/css/github-markdown.css');
 	@import url('@/common/css/github-min.css');
-	
+
 	.tag-list {
 		// 一行排列不下，换行
 		flex-wrap: wrap;
 		padding: 10rpx 25rpx;
 		font-size: 14px;
 		background-color: #ffffff;
+
 		.tag-view {
 			margin-top: 15rpx;
 			margin-right: 20rpx;
 		}
 	}
-    
+
 	.content-main {
 		padding: 25rpx;
+
 		.title {
 			font-size: 45rpx;
 			line-height: 55rpx;
 			font-weight: bold;
 		}
+
 		.info {
 			display: flex;
 			align-items: center;
 			margin: 30rpx 0;
+
 			.author {
 				font-size: 30rpx;
 				color: #303133;
+
 				image {
 					width: 45rpx;
 					height: 45rpx;
@@ -102,6 +136,7 @@
 					margin-right: 10rpx;
 				}
 			}
+
 			&>text {
 				margin-left: 10rpx;
 				font-size: 25rpx;
@@ -113,13 +148,15 @@
 	.footer {
 		background-color: #F1F1F1;
 		padding-top: 10rpx;
+
 		/* 标题 */
-		.footer-header{
+		.footer-header {
 			font-size: 30rpx;
 			color: #303133;
 			font-weight: bold;
 			padding: 25rpx;
-			&:before{
+
+			&:before {
 				content: '';
 				width: 0;
 				height: 40rpx;
@@ -128,27 +165,30 @@
 			}
 		}
 	}
-	
+
 	/* 评论 */
 	.comment {
 		background-color: #FFFFFF;
 		margin-top: 10rpx;
 		// 最下方有评论按钮,
 		padding-bottom: 120rpx;
+
 		.comment-item {
 			padding: 20rpx 25rpx;
-			image{
+
+			image {
 				width: 50rpx;
 				height: 50rpx;
 				border-radius: 50rpx;
 				margin-right: 20rpx;
 			}
-			
-			.comment-right{
+
+			.comment-right {
 				width: calc(100% - 80rpx);
 				font-size: 25rpx;
 				color: $jh-text-color-grey;
-				.content{
+
+				.content {
 					font-size: 30rpx;
 					color: $jh-text-color-black;
 					margin: 10rpx 0;
@@ -156,17 +196,18 @@
 			}
 		}
 	}
-	
+
 	/* 底部 */
 	.bottom {
 		position: fixed;
 		left: 0;
 		right: 0;
 		bottom: 0;
-		white-space: nowrap;// 不换行
+		white-space: nowrap; // 不换行
 		padding: 20rpx;
 		background-color: #FFFFFF;
 		border-top: $jh-underline;
+
 		.textarea {
 			font-size: 30rpx;
 			padding: 15rpx 20rpx;
@@ -175,6 +216,7 @@
 			background-color: #F8F9FB;
 			border-radius: 30rpx;
 		}
+
 		.btn {
 			padding: 0 20rpx;
 			margin-left: 15rpx;
