@@ -79,7 +79,6 @@ export default {
 	width: 100%;
 	padding: 100rpx 50rpx;
 	text-align: center;
-	text-align: -webkit-center;
 }
 
 .mescroll-empty.empty-fixed {
@@ -113,5 +112,9 @@ export default {
 
 .mescroll-empty .empty-btn:active {
 	opacity: 0.75;
+}
+
+image {
+	display: inline-block;
 }
 </style>
