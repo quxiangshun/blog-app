@@ -8,7 +8,7 @@
 	<mescroll-uni :ref="'mescrollRef'+i" @init="mescrollInit" :height="height" :down="downOption" @down="downCallback"
 		:offset="0" :up="upOption" @up="upCallback">
 		<!-- 数据列表 -->
-		<article-item v-for="(item, index) in goods" :key="index" ></article-item>
+		<article-item v-for="(item, index) in list" :key="index" :item="item"></article-item>
 	</mescroll-uni>
 </template>
 
@@ -38,8 +38,7 @@
 						tip: '~ 空空如也 ~', // 提示
 					}
 				},
-				goods: [], //列表数据
-				searchData: {}
+				list: [], //列表数据
 			}
 		},
 		props: {
@@ -62,17 +61,20 @@
 			/*上拉加载的回调: 其中page.num:当前页 从1开始, page.size:每页数据条数,默认10 */
 			async upCallback(page) {
 				// 根据分页条件查询列表数据
+				const searchData = {
+					category: this.tabs[this.index].id
+				}
 				const {
 					data
-				} = await api.getList(this.searchData, page.num, page.size)
+				} = await api.getList(searchData, page.num, page.size)
 				// 注意是声明的常量list
 				const list = data.records
 				if (page.num === 1) {
-					this.goods = []
+					this.list = []
 					// 回到顶部（距离顶部的位置,时长毫秒数）
 					this.mescroll.scrollTo(0, 0)
 				}
-				this.goods = this.goods.concat(list)
+				this.list = this.list.concat(list)
 
 				// 请求成功，隐藏加载装填
 				this.mescroll.endBySize(list.length, data.total)
