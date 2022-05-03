@@ -35,8 +35,9 @@
 		},
 		watch: {
 			shareData(newVal) {
-				this.image = newVal.mainImage
-				this.title = newVal.title
+				if(newVal.mainImage) this.image = newVal.mainImage
+				if(newVal.title) this.title = newVal.title
+				
 				this.href = this.$env.HOST_H5 + this.$util.routePath();
 			}
 		},

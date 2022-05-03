@@ -46,6 +46,11 @@
 			<textarea class="textarea" placeholder="有何高见,展开讲讲..."></textarea>
 			<button class="btn" size="mini">提交</button>
 		</view>
+
+		<!-- #ifdef APP-PLUS -->
+		<!-- 分享组件 -->
+		<jh-share ref="jhShare" :shareData="{title: detailData.title, mainImage: detailData.imageUrl}"></jh-share>
+		<!-- #endif -->
 	</view>
 </template>
 
@@ -64,6 +69,30 @@
 			this.getDetails()
 			this.loadCommentList()
 		},
+		// #ifdef APP-PLUS
+		/**
+		 * 监听App端右上角分享按钮
+		 * @param {Object} e
+		 */
+		onNavigationBarButtonTap(e) {
+			if (e.type === 'share') {
+				this.$refs.jhShare.showHandler()
+			}
+		},
+		// #endif
+		// #ifndef APP-PLUS || H5 || MP-BAIDU
+		/**
+		 * 针对小程序端分享
+		 * @param {Object} res
+		 */
+		onShareAppMessage(res) {
+			return {
+				title: this.detailData.title,
+				path: this.$util.routePath(),
+				imageUrl: this.detailData.imageUrl
+			}
+		},
+		// #endif
 		methods: {
 			/**
 			 * 查询文章详情
@@ -78,7 +107,7 @@
 				})
 				// 图片在H5和小程序太大了，通过以下方式处理
 				data.htmlContent = data.htmlContent.replace(/\<img/gi, '<img style="width:100%;height:auto"')
-				
+
 				this.detailData = data
 			},
 			/**
