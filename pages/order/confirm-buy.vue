@@ -78,7 +78,9 @@
 <script>
 	import courseItem from '@/components/common/course-item.vue'
 	import api from '@/api/order.js'
+	import payMixin from './mixins/pay.js'
 	export default {
+		mixins: [payMixin],
 		components: {
 			courseItem
 		},
@@ -88,9 +90,11 @@
 				courseIds: [], // 课程IDs
 				isIOS: false, // 是否为APP端的IOS设备
 				balance: 0, // IOS设备余额
-				provider: 'alipay', // 支付方式
-				loading: false, // 是否提交
-
+				data: {
+					price: 0, // 支付价格
+					courseIds: [], // 课程ID集合
+					openid: null, // 小程序的openid
+				},
 			}
 		},
 		computed: {
@@ -115,8 +119,6 @@
 			// #ifdef MP-WEIXIN
 			if (option.course) this.course = JSON.parse(decodeURIComponent(option.course))
 			if (option.groupCourse) this.course = JSON.parse(decodeURIComponent(option.groupCourse))
-			// 微信小程序选中微信支付
-			this.provider = 'wxpay'
 			// #endif
 
 			// #ifdef APP-PLUS
@@ -178,145 +180,7 @@
 				this.loading = false
 			},
 			// #endif
-			/**
-			 * 切换支付提供商
-			 * @param {Object} event
-			 */
-			radioChange(event) {
-				this.provider = event.detail.value
-			},
-			/**
-			 * 登录微信小程序，获取用户的openid
-			 */
-			loginWeixinMp() {
-				return new Promise((resolve, reject) => {
-					// 1. 登录微信小程序，获取code
-					uni.login({
-						provider: 'weixin',
-						success: async (res) => {
-							console.log('res', res.code)
-							// 2. 童工code，调用后台服务接口，获取openid
-							// TODO
-							// const openid = await api.getUserOpenid()
-							const openid = 'xxxxxxx'
-							// 把openid放到本地，可以避免每次调用支付的时候都去获取openid
-							uni.setStorageSync('openid', openid)
-							resolve(openid)
-						},
-						fail: (err) => {
-							reject(err)
-						}
-					})
-				})
-			},
-			// 微信小程序支付
-			async wxPayHandler() {
-				this.loading = true
-				let openid = uni.getStorageInfoSync('openid')
-				if (!openid) {
-					try {
-						openid = await this.loginWeixinMp()
-					} catch (e) {
-						console.error(e)
-					}
-					if (!openid) {
-						uni.showModal({
-							content: '获取openid失败',
-							showCancel: false
-						})
-						this.loading = false
-						return
-					}
-				}
-
-				// 3. 通过openid调用后台服务接口获取订单信息
-				const orderInfo = await this.getOrderInfo(openid)
-				// 4. 发起支付
-				uni.requestPayment({
-					...orderInfo,
-					success: (res) => {
-						this.$util.msg('支付成功!')
-						// 跳转到订单页
-						this.navTo(`/pages/order/order`)
-					},
-					fail: (err) => {
-						uni.showModal({
-							content: '支付失败!，原因：' + err.errMsg,
-							showCancel: false
-						})
-					},
-					complete: () => {
-						this.loading = false
-					}
-				})
-
-			},
-			// 安卓端APP支付
-			async payHandler() {
-				this.loading = true
-				// #ifdef APP-PLUS
-				// 1. 获取订单信息
-				const orderInfo = await this.getOrderInfo()
-				if (!orderInfo) {
-					uni.showModal({
-						content: '获取订单信息失败',
-						showCancel: false
-					})
-					return
-				}
-				// 2. 发送支付请求
-				uni.requestPayment({
-					provider: this.provider,
-					orderInfo: orderInfo,
-					success: (e) => {
-						uni.showModal({
-							content: '支付成功!',
-							showCancel: false
-						})
-						// 跳转到订单页
-						this.navTo(`/pages/order/order`)
-					},
-					fail: (e) => {
-						console.log('支付失败', e)
-						uni.showModal({
-							content: '支付失败!',
-							showCancel: false
-						})
-					},
-					complete: () => {
-						this.loading = false
-					}
-				})
-				// #endif
-
-				// #ifdef H5
-				// H5的支付逻辑需要单独实现
-				// #endif
-			},
-			getOrderInfo(openid) {
-				return new Promise(async (resolve, reject) => {
-
-					// 提交给后台的数据（字形扩展），用于后台校验订单数据以及课程金额是否正确
-					let data = {
-						courseIds: this.courseIds
-					}
-					let res;
-					// 如果openid有意义，则是微信小程序发送请求到服务端获取订单信息
-					if (openid) {
-						data.openid = openid
-						res = await api.getOrderInfoWxmppay(data)
-					} else if (!openid && this.provider === 'alipay') {
-						res = await api.getOrderInfoAlipay(data)
-					} else if (!openid && this.provider === 'wxpay') {
-						res = await api.getOrderInfoWxpay(data)
-					}
-					if (res.code === 20000) {
-						resolve(res.data)
-					} else {
-						reject(new Error('获取支付信息失败，原因：' + res.message))
-					}
-				})
-			},
+			
 			getCourseIds() {
 				let courseIds = []
 				if (this.course.list) {
@@ -326,7 +190,7 @@
 				} else {
 					courseIds.push(this.course.id)
 				}
-				this.courseIds = courseIds;
+				this.data.courseIds = courseIds;
 			}
 		}
 	}

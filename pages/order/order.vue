@@ -116,9 +116,9 @@
 				})
 			},
 			async orderPay(item) {
+				this.currentOrder = item
 				if (this.isIOS) {
 					this.loading = true
-					this.currentOrder = item
 					// 是app端ios平台，则弹出
 					this.showHidePay()
 					// 查询余额
@@ -128,7 +128,12 @@
 					this.balance = data
 					this.loading = false
 				} else {
+					const data = {
+						price: this.payPrice,
+						orderId: this.currentOrder.orderId
+					}
 					// 非app端ios，则跳转到订单支付页面
+					this.navTo(`/pages/order/order-pay?params=${JSON.stringify(data)}`)
 				}
 
 			},

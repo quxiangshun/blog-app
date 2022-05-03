@@ -81,8 +81,29 @@
 		}, {
 			"path": "pages/article/article",
 			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
+				"navigationBarTitleText": "文章",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "345DC2",
+				"app-plus": {
+					// 自定义导航配置
+					"titleNView": {
+						"searchInput": {
+							// 默认不自动获取焦点
+							"autoFocus": false,
+							// 默认居中显示
+							"align": "center",
+							"backgroundColor": "#F0F1F2",
+							// "backgroundColor": "#000",
+							"borderRadius": "30rpx",
+							// 提示信息
+							"placeholder": "搜索你想要的内容",
+							// 提示文本颜色
+							"placeholderColor": "#979C9D",
+							// 禁止输入，通过点击跳转到搜索页
+							"disabled": true
+						}
+					}
+				}
 			}
 
 		}, {
@@ -225,6 +246,17 @@
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "我的订单"
+            }
+            
+        }
+        ,{
+            "path" : "pages/order/order-pay",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "订单支付",
+                "app-plus": {
+                	"bounce": "none"
+                }
             }
             
         }
