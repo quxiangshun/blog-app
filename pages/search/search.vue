@@ -41,7 +41,6 @@
 	import courseList from './components/course-list.vue'
 	import articleList from './components/article-list.vue'
 	import questionList from './components/question-list.vue'
-	import tabBar from '@/components/common/tab-bar.vue'
 	import MescrollMoreMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mixins/mescroll-more.js";
 	
 	// 页面实例
@@ -50,7 +49,6 @@
 		mixins: [MescrollMoreMixin], // 多个mescroll-body写在子组件时, 则使用mescroll-more.js补充子组件的页面生命周期
 		components: {
 			keyword,
-			tabBar,
 			// downBar,
 			courseList,
 			articleList,

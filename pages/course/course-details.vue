@@ -45,7 +45,6 @@
 	import courseComment from './components/course-comment.vue'
 	import courseGroup from './components/course-group.vue'
 	import bottomBtn from './components/bottom-btn.vue'
-	import tabBar from '@/components/common/tab-bar.vue'
 	import tabs from '@/config/course-details-tabs.js'
 	import api from '@/api/course.js'
 	export default {
@@ -55,8 +54,7 @@
 			courseDir,
 			courseComment,
 			courseGroup,
-			bottomBtn,
-			tabBar
+			bottomBtn
 		},
 		data() {
 			return {
