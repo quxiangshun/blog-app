@@ -83,7 +83,7 @@
 			"style": {
 				"navigationBarTitleText": "文章",
 				"navigationBarTextStyle": "white",
-				"navigationBarBackgroundColor": "345DC2",
+				"navigationBarBackgroundColor": "#345DC2",
 				"app-plus": {
 					// 自定义导航配置
 					"titleNView": {
