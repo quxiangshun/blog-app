@@ -4,7 +4,7 @@
 		<down-bar :params="params" @search="search"></down-bar>
 		<!-- top="120"下拉布局往下偏移,防止被悬浮菜单遮住 -->
 		<!-- ref动态生成: 字节跳动小程序编辑器不支持一个页面存在相同的ref (如不考虑字节跳动小程序可固定值为 ref="mescrollRef") -->
-		<mescroll-body :ref="'mescrollRef'+i" @init="mescrollInit" :down="downOption" @down="downCallback"
+		<mescroll-body :ref="'mescrollRef'+i" :down="downOption" @down="downCallback"
 			:up="upOption" @up="upCallback" @emptyclick="emptyClick">
 			<!-- 数据列表 -->
 			<article-item v-for="(item, index) in list" :key="index" :item="item"></article-item>
