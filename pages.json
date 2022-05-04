@@ -304,6 +304,29 @@
             }
             
         }
+		,{
+		    "path" : "pages/question/question-details",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "backgroundColor": "#FFFFFF",
+				"app-plus": {
+					// 禁止回弹效果
+					"bounce": "none",
+					"scrollIndicator":"none", // 隐藏页面滚动条（APP）
+					"titleNView": {
+						// #ifdef APP-PLUS
+						"buttons": [
+							{
+								"type":"share" // uniapp提供好的分享按钮
+							}
+						]
+						// #endif
+					}
+				}
+		    }
+		    
+		}
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

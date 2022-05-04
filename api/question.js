@@ -18,7 +18,7 @@ export default {
 			}
 		})
 	},
-	
+
 	/**
 	 * 分页查询热门回答列表接口(按照回复数降序)
 	 * @param {Object} current 当前页码
@@ -34,7 +34,7 @@ export default {
 			}
 		})
 	},
-	
+
 	/**
 	 * 分页查询最新问题列表（按照更新时间排序）
 	 * @param {Object} current 当前页码
@@ -50,7 +50,7 @@ export default {
 			}
 		})
 	},
-	
+
 	/**
 	 * 分页查询最新问题列表接口（按更新时间降序）
 	 * @param {Object} current 当前页码
@@ -65,5 +65,47 @@ export default {
 				size
 			}
 		})
-	}
+	},
+	/**
+	 * 查询问题详情数据接口
+	 * @param {Object} questionId
+	 */
+	getById(questionId) {
+		return request({
+			url: `/question/api/question/${questionId}`
+		})
+	},
+
+	/**
+	 * 通过问题ID查询所有回答
+	 * @param {Object} questionId
+	 */
+	getReplyByQuestionId(questionId) {
+		return request({
+			url: `/question/api/reply/list/${questionId}`
+		})
+	},
+
+	/**
+	 * 新增问题回答接口
+	 * @param {Object} data
+	 */
+	addQuestionReply(data) {
+		return request({
+			url: '/question/reply',
+			method: 'POST',
+			data
+		})
+	},
+
+	/**
+	 * 关注问题接口（0未关注、1已关注）
+	 * @param {Object} data
+	 */
+	starQuestion(questionId) {
+		return request({
+			url: `/question/question/star/${questionId}`,
+			method: 'PUT'
+		})
+	},
 }

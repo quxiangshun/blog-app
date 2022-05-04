@@ -1,5 +1,5 @@
 <template>
-	<view class="question-item">
+	<view class="question-item" @click="navTo(`/pages/question/question-details?id=${item.id}`)">
 		<text class="title text-ellipsis">{{item.title}}</text>
 		<view class="foot space-between">
 			<view class="">
