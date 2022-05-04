@@ -21,15 +21,17 @@
 		</view>
 
 		<!-- 功能列表 -->
-		<jh-list></jh-list>
+		<jh-list :list="list"></jh-list>
 	</view>
 </template>
 
 <script>
+	import MyListBar from '@/config/my-list-bar.js'
 	export default {
 		data() {
 			return {
 				isLogin: false,
+				list: MyListBar(), // 调用方法不要缺少小括号
 			}
 		},
 		methods: {
