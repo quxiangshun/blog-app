@@ -282,7 +282,7 @@
             
         }
         ,{
-            "path" : "pages/article/details",
+            "path" : "pages/article/article-details",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",

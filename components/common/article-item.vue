@@ -1,5 +1,5 @@
 <template>
-	<view class="article-item" @click="navTo(`/pages/article/details?id=${item.id}`)">
+	<view class="article-item" @click="navTo(`/pages/article/article-details?id=${item.id}`)">
 		<text class="title text-ellipsis">{{item.title}}</text>
 		<view class="article-content row">
 			<view class="left-text column">
