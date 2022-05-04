@@ -50,8 +50,9 @@
 
 		<!-- 关注和评论 -->
 		<view class="question-option row">
-			<text class="one iconfont icon-jiaguanzhu">关注问题</text>
-			<!-- <text class="one grey">已关注问题</text> -->
+			<!-- 0未关注 1已关注 -->
+			<text v-if="detailData.star" @click="starQuestionHandler" class="one grey">已关注问题</text>
+			<text v-else @click="starQuestionHandler" class="one iconfont icon-jiaguanzhu">关注问题</text>
 			<text @click="showAnswerHandler" class="one iconfont icon-edit">回答问题</text>
 		</view>
 
@@ -148,7 +149,7 @@
 			},
 			showAnswerHandler() {
 				const isLogin = this.$util.isLogin()
-				if (!isLogin) this.showAnswer = !this.showAnswer
+				if (isLogin) this.showAnswer = !this.showAnswer
 				if (this.showAnswer) {
 					this.disabled = false
 					this.$nextTick(() => {
@@ -180,6 +181,23 @@
 						icon: 'success'
 					})
 					this.content = ''
+				} else {
+					this.$util.msg('回答失败，请重试')
+				}
+			},
+			async starQuestionHandler() {
+				uni.showLoading()
+				const res = await api.starQuestion(this.id)
+				uni.hideLoading()
+				if (res.code === 20000) {
+					this.detailData.star = !this.detailData.star
+					let msg = '已关注'
+					if(!this.detailData.star) {
+						msg = '取消关注'
+					}
+					this.$util.msg(msg, {
+						icon: 'success'
+					})
 				} else {
 					this.$util.msg('回答失败，请重试')
 				}
