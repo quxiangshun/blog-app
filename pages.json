@@ -336,6 +336,14 @@
 		    }
 		    
 		}
+        ,{
+            "path" : "pages/my/setting",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "设置"
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

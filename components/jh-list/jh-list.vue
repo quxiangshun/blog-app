@@ -10,7 +10,7 @@
 				<view class="right center">
 					<text v-if="nav.text">{{nav.text}}</text>
 					<!-- @click.stop="()=>{}"阻止父组件的点击事件，否则clickHandler方法会调用两次 -->
-					<switch v-if="nav.checked || nav.checked === false" checked="nav.checked" color="#345DC2"
+					<switch v-if="nav.checked || nav.checked === false" :checked="nav.checked" color="#345DC2"
 						@click.stop="()=>{}" @change="clickHandler(nav)" />
 					<image v-if="nav.src" :src="nav.src || '/static/logo.png'" mode=""></image>
 					<text v-if="nav.rightIcon" :class="nav.rightIcon"></text>
@@ -39,8 +39,8 @@
 					return
 				}
 				// 点击事件，传递给父组件
-				if (obj.event) {
-					this.$emit(obj.event, obj)
+				if (nav.event) {
+					this.$emit(nav.event, nav)
 				}
 			}
 		}

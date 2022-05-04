@@ -1,7 +1,9 @@
 <template>
 	<view>
+		<!-- #ifndef MP -->
 		<!-- 头部空出的距离 -->
 		<view class="status-bar">
+		<!-- #endif -->
 
 		</view>
 		<view class="my-header">

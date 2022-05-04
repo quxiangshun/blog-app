@@ -34,7 +34,7 @@ export default () => {
 				page: '/pages/my/setting', // 目标页面，配置行点击的时候跳转页面
 			},
 			{
-				icon: 'jh-icon jh-icon-warn', // 左侧图标
+				icon: 'jh-icon jh-icon-notice-color', // 左侧图标
 				title: '意见反馈', // 左侧标题
 				rightIcon, // 右侧图标
 				page: '/pages/my/feedback', // 目标页面，配置行点击的时候跳转页面
