@@ -126,7 +126,7 @@
 			clickComment() {
 				if (!this.disabled) return
 				const isLogin = this.$util.isLogin()
-				if (!isLogin) {
+				if (isLogin) {
 					this.disabled = false
 					this.$nextTick(() => {
 						this.focus = true
@@ -135,6 +135,7 @@
 			},
 			async addComment() {
 				if(!this.content) return 
+				this.focus = false
 				uni.showLoading({
 					title: '提交中...',
 					mask: true

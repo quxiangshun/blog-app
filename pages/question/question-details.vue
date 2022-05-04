@@ -52,20 +52,21 @@
 		<view class="question-option row">
 			<text class="one iconfont icon-jiaguanzhu">关注问题</text>
 			<!-- <text class="one grey">已关注问题</text> -->
-			<text class="one iconfont icon-edit">回答问题</text>
+			<text @click="showAnswerHandler" class="one iconfont icon-edit">回答问题</text>
 		</view>
 
 		<!-- 回答问题输入框 -->
-		<view v-if="false" class="answer-box" @touchmove.stop.prevent="()=>{}">
-			<view class="title center">
+		<view v-if="showAnswer" class="answer-box" @touchmove.stop.prevent="()=>{}">
+			<view class="title center" @touchend.prevent="()=>{}">
 				<view class="one">
-					<text class="iconfont icon-close"></text>
+					<text @touchend.prevent="showAnswerHandler" class="iconfont icon-close"></text>
 				</view>
 				<text class="one">回答问题</text>
-				<button class="btn" size="mini" :disabled="disabled || !content.trim()" @click="addComment">提交</button>
+				<button class="btn" type="primary" size="mini" :disabled="disabled || !content.trim()"
+					@click="addReply">提交</button>
 			</view>
 			<textarea maxlength="500" class="textarea" v-model="content" placeholder="有何高见,展开讲讲..." :disabled="disabled"
-				@focus="focus" @click="clickComment"></textarea>
+				@focus="focus"></textarea>
 
 		</view>
 
@@ -84,6 +85,7 @@
 				id: null, // 文章ID
 				detailData: {}, // 详情数据
 				replyList: [], // 评论列表
+				showAnswer: false, // 显示输入框
 				content: '', // 评论内容
 				disabled: true, // 未登录之前禁止评论
 				focus: false, // 自动获取焦点
@@ -144,38 +146,42 @@
 				} = await api.getReplyByQuestionId(this.id)
 				this.replyList = data
 			},
-			clickComment() {
-				if (!this.disabled) return
+			showAnswerHandler() {
 				const isLogin = this.$util.isLogin()
-				if (!isLogin) {
+				if (!isLogin) this.showAnswer = !this.showAnswer
+				if (this.showAnswer) {
 					this.disabled = false
 					this.$nextTick(() => {
 						this.focus = true
 					})
 				}
+
 			},
-			async addComment() {
+			async addReply() {
 				if (!this.content) return
+				this.focus = false
 				uni.showLoading({
 					title: '提交中...',
 					mask: true
 				})
 				const content = this.content.trim()
 				const data = {
-					content,
-					articleId: this.id
+					mdContent: content,
+					htmlContent: content,
+					questionId: this.id
 				}
 				uni.hideLoading()
 				const res = await api.addQuestionReply(data)
 
 				if (res.code === 20000) {
+					this.showAnswer = false
 					this.loadReplyList()
-					this.$util.msg('评论成功', {
+					this.$util.msg('回答成功', {
 						icon: 'success'
 					})
 					this.content = ''
 				} else {
-					this.$util.msg('评论失败，请重试')
+					this.$util.msg('回答失败，请重试')
 				}
 			}
 		}
