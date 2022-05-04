@@ -2,10 +2,9 @@
 	<view>
 		<!-- #ifndef MP -->
 		<!-- 头部空出的距离 -->
-		<view class="status-bar">
+		<view class="status-bar"></view>
 		<!-- #endif -->
-
-		</view>
+		
 		<view class="my-header">
 			<view class="header-content center space-between">
 				<view class="left center">

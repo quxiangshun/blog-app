@@ -143,7 +143,23 @@
 		},
 		methods: {
 			// 视频播放结束后会回调该方法
-			nextPlay() {
+			nextPlay(e) {
+				if(e && e.type === 'ended') {
+					const autoPlay = uni.getStorageSync('auto-play')
+					if (!autoPlay) {
+						uni.showModal({
+							content: '是否自动播放下个视频？',
+							success: (res) => {
+								if(res.confirm) {
+									uni.setStorageSync('auto-play', true)
+								}
+								this.nextPlay()
+							}
+						})
+						return
+					}
+				}
+				
 				// 1. 获取当前章的下一节课，如果有下一节课则播放下一节课
 				let chapter = this.chapterList[this.activeObj.chapterIndex]
 				let section = chapter && chapter.sectionList[this.activeObj.sectionIndex + 1]
