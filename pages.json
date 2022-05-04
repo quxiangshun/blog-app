@@ -352,6 +352,14 @@
             }
             
         }
+        ,{
+            "path" : "pages/my/about",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "关于我们"
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
