@@ -43,8 +43,9 @@
 
 		<!-- 评论区 -->
 		<view class="bottom center" @touchmove.stop.prevent="()=>{}">
-			<textarea class="textarea" placeholder="有何高见,展开讲讲..."></textarea>
-			<button class="btn" size="mini">提交</button>
+			<textarea class="textarea" v-model="content" placeholder="有何高见,展开讲讲..." :disabled="disabled" @focus="focus"
+				@click="clickComment"></textarea>
+			<button class="btn" size="mini" :disabled="disabled || !content.trim()" @click="addComment">提交</button>
 		</view>
 
 		<!-- #ifdef APP-PLUS -->
@@ -62,6 +63,9 @@
 				id: null, // 文章ID
 				detailData: {}, // 详情数据
 				commentList: [], // 评论列表
+				content: '', // 评论内容
+				disabled: true, // 未登录之前禁止评论
+				focus: false, // 自动获取焦点
 			}
 		},
 		onLoad(option) {
@@ -118,6 +122,38 @@
 					data
 				} = await api.getArticleCommentById(this.id)
 				this.commentList = data
+			},
+			clickComment() {
+				if (!this.disabled) return
+				const isLogin = this.$util.isLogin()
+				if (!isLogin) {
+					this.disabled = false
+					this.$nextTick(() => {
+						this.focus = true
+					})
+				}
+			},
+			async addComment() {
+				if(!this.content) return 
+				uni.showLoading({
+					title: '提交中...',
+					mask: true
+				})
+				const content =  this.content.trim()
+				const data = {
+					content,
+					articleId: this.id
+				}
+				uni.hideLoading()
+				const res = await api.addArticleComment(data)
+				
+				if(res.code === 20000) {
+					this.loadCommentList()
+					this.$util.msg('评论成功', {icon: 'success'})
+					this.content = ''
+				} else {
+					this.$util.msg('评论失败，请重试')
+				}
 			}
 		}
 	}
