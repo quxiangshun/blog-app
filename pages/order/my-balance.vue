@@ -47,7 +47,7 @@
 				price: 0, // 支付金额
 				courseIds: [], // 选中的课程IDs
 				balance: 0, // 余额
-				applePrice: 0, // 需要充值的金额
+				applePrice: 100, // 需要充值的金额
 				moneyList: [], // 页面渲染的金额
 				orderId: null, // 订单ID
 			}
@@ -59,26 +59,27 @@
 				this.price = params.price
 				this.courseIds = params.courseIds
 				this.orderId = params.orderId
-				// 2. 查询余额
-				this.loadData()
-
-				// 获取渠道苹果内部支付
-				plus.payment.getChannels((channels) => {
-					console.log("获取到channel" + JSON.stringify(channels))
-					for (var i in channels) {
-						var channel = channels[i];
-						if (channel.id === 'appleiap') {
-							iapChannel = channel;
-							this.requestOrder();
-						}
-					}
-					if (!iapChannel) {
-						this.errorMsg()
-					}
-				}, (error) => {
-					this.errorMsg()
-				});
 			}
+			// 2. 查询余额
+			this.loadData()
+
+			// 获取渠道苹果内部支付
+			plus.payment.getChannels((channels) => {
+				// console.log("获取到channel" + JSON.stringify(channels))
+				for (var i in channels) {
+					var channel = channels[i];
+					if (channel.id === 'appleiap') {
+						iapChannel = channel;
+						this.requestOrder();
+					}
+				}
+				if (!iapChannel) {
+					this.errorMsg()
+				}
+			}, (error) => {
+				this.errorMsg()
+			});
+
 		},
 		methods: {
 			async loadData() {
