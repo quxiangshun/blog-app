@@ -344,6 +344,14 @@
             }
             
         }
+        ,{
+            "path" : "pages/my/feedback",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "意见反馈"
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
