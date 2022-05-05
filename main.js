@@ -21,8 +21,12 @@ Vue.prototype.$util = util
 import * as env from './config/env.js'
 Vue.prototype.$env = env
 
+import store from './store'
+Vue.prototype.$store = store
+
 App.mpType = 'app'
 const app = new Vue({
+	store,
 	...App
 })
 app.$mount()

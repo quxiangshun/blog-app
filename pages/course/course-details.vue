@@ -254,10 +254,10 @@
 			clickBottom() {
 				if (this.isBuy || this.course.isFree) {
 					// 已购买或免费，跳转视频播放页
-					this.navTo(`/pages/course/course-play?id=${this.id}`)
+					this.navTo(`/pages/course/course-play?id=${this.id}`, {login: true})
 				} else {
 					// 未购买，跳转确认购买页面
-					this.navTo(`/pages/order/confirm-buy?course=${encodeURIComponent(JSON.stringify(this.course))}`)
+					this.navTo(`/pages/order/confirm-buy?course=${encodeURIComponent(JSON.stringify(this.course))}`, {login: true})
 				}
 			},
 			// 关闭播放窗口
@@ -274,7 +274,7 @@
 				this.activeObj = obj.activeObj
 				// console.log(obj.section)
 				if (this.isBuy) {
-					this.navTo(`/pages/course/course-play?id=${this.id}`)
+					this.navTo(`/pages/course/course-play?id=${this.id}`, {login: true})
 					return
 				}
 				this.videoUrl = obj.section.videoUrl

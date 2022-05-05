@@ -360,6 +360,36 @@
             }
             
         }
+        ,{
+            "path" : "pages/auth/login",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "登录",
+				"navigationStyle": "custom",
+				"app-plus": {
+					"bounce": "none",
+					"animationType": "slide-in-bottom"
+				}
+            }
+            
+        }
+        ,{
+            "path" : "pages/public/agreement",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "用户服务协议"
+            }
+            
+        }
+        ,{
+            "path" : "pages/public/privacy",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "隐私权政策",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

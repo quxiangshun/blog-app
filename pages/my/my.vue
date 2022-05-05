@@ -4,14 +4,13 @@
 		<!-- 头部空出的距离 -->
 		<view class="status-bar"></view>
 		<!-- #endif -->
-		
 		<view class="my-header">
-			<view class="header-content center space-between">
+			<view class="header-content center space-between" @click="navTo('/pages/auth/login')">
 				<view class="left center">
-					<image class="header-image" :src="isLogin ? '' : '/static/logo.png'" mode=""></image>
-					<view v-if="isLogin" class="header-info column">
-						<text class="nickname">线程池</text>
-						<text class="username">用户名：休息休息吧</text>
+					<image class="header-image" :src="hasLogin ? userInfo.imageUrl : '/static/logo.png'" mode=""></image>
+					<view v-if="hasLogin" class="header-info column">
+						<text class="nickname">{{userInfo.nickName}}</text>
+						<text class="username">用户名：{{userInfo.username}}</text>
 					</view>
 					<view v-else class="header-info column">
 						<text class="nickname">请登录</text>
@@ -27,13 +26,20 @@
 </template>
 
 <script>
+	import {mapState, mapGetters} from 'vuex'
 	import MyListBar from '@/config/my-list-bar.js'
 	export default {
 		data() {
 			return {
-				isLogin: false,
 				list: MyListBar(), // 调用方法不要缺少小括号
 			}
+		},
+		computed: {
+			// 等价于 userInfo() {return this.$store.state.userInfo}
+			// 解析属性
+			...mapState(['userInfo']),
+			// 解析计算属性
+			...mapGetters(['hasLogin'])
 		},
 		methods: {
 

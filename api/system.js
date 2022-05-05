@@ -13,4 +13,16 @@ export default {
 			data
 		})
 	},
+	
+	/**
+	 * 发送短信验证码
+	 * @param {Object} data
+	 */
+	sendSmsCode(data) {
+		return request({
+			url: '/system/sms/code',
+			method: 'POST',
+			data
+		})
+	}
 }
