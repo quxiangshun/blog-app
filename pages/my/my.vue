@@ -5,7 +5,7 @@
 		<view class="status-bar"></view>
 		<!-- #endif -->
 		<view class="my-header">
-			<view class="header-content center space-between" @click="navTo('/pages/auth/login')">
+			<view class="header-content center space-between" @click="hasLogin ? navTo('/pages/my/user') : navTo('/pages/auth/login')">
 				<view class="left center">
 					<image class="header-image" :src="hasLogin ? userInfo.imageUrl : '/static/logo.png'" mode=""></image>
 					<view v-if="hasLogin" class="header-info column">

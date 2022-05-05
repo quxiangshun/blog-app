@@ -390,6 +390,22 @@
             }
             
         }
+        ,{
+            "path" : "pages/my/user",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/auth/bind-mobile",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "绑定手机"
+            }
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
