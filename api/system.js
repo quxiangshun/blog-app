@@ -24,5 +24,13 @@ export default {
 			method: 'POST',
 			data
 		})
+	},
+	
+	updateUserInfo(data) {
+		return request({
+			url: '/system/user',
+			method: 'PUT',
+			data
+		})
 	}
 }

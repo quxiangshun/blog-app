@@ -13,7 +13,6 @@ const store = new Vuex.Store({
 	getters: { // store的计算属性
 		hasLogin(state) {
 			// 取两次反，会将原数据类型转换成布尔类型
-			console.log(state.accessToken, !state.accessToken, !!state.accessToken)
 			return !!state.accessToken
 		}
 	},
