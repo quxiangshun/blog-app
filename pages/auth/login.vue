@@ -81,7 +81,6 @@
 				this.loading = true
 				uni.showLoading({title: '登录中', mask: true})
 				const res = await api.login( {mobile, code} )
-				console.log('resres', res.data)
 				this.loading = false
 				uni.hideLoading()
 				

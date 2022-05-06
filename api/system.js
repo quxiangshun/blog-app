@@ -30,7 +30,8 @@ export default {
 		return request({
 			url: '/system/user',
 			method: 'PUT',
-			data
+			data,
+			isLogin: true
 		})
 	}
 }

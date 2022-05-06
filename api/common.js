@@ -6,7 +6,8 @@ export default {
 	uploadImg(filePath) {
 		return upload({
 			url: '/article/file/upload',
-			filePath
+			filePath,
+			isLogin: true
 		})
 	}
 	

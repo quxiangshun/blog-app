@@ -41,6 +41,9 @@
 			// 解析计算属性
 			...mapGetters(['hasLogin'])
 		},
+		onLoad() {
+			this.$util.isLogin()
+		},
 		methods: {
 
 		}

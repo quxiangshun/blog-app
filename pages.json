@@ -405,6 +405,18 @@
                 "navigationBarTitleText": "绑定手机"
             }
         }
+        ,{
+            "path" : "pages/my/study",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "我的学习",
+                // 下拉回弹背景色
+                "backgroundColor": "#FFFFFF",
+                // 上拉回弹背景色
+                "backgroundColorBottom": "#FFFFFF"
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

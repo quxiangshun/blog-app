@@ -94,7 +94,8 @@ export default {
 		return request({
 			url: '/question/reply',
 			method: 'POST',
-			data
+			data,
+			isLogin: true
 		})
 	},
 
@@ -105,7 +106,8 @@ export default {
 	starQuestion(questionId) {
 		return request({
 			url: `/question/question/star/${questionId}`,
-			method: 'PUT'
+			method: 'PUT',
+			isLogin: true
 		})
 	},
 }

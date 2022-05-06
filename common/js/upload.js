@@ -1,6 +1,7 @@
 import {
 	msg
 } from './util.js'
+import store from '@/store'
 
 // 基础URL
 // #ifndef H5
@@ -15,9 +16,22 @@ let BASE_URL = '/api'
 
 // 上传图片
 const upload = (options = {}) => {
+	if (accessToken) {
+		// oauth2协议
+		options.header = {
+			'Authorization': `Bearer ${accessToken}`
+		}
+	}
 	// resolve 正常响应，reject异常响应
 	return new Promise((resolve, reject) => {
+		if (options.isLogin && !accessToken) {
+			uni.navigateTo({
+				url: '/pages/auth/login'
+			})
+			return
+		}
 		uni.uploadFile({
+			header: options.header || {},
 			url: BASE_URL + options.url, // 服务器 url
 			filePath: options.filePath, // 要上传文件资源的路径。
 			name: options.name || 'file', // File 对象对应 key

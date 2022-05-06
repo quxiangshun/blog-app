@@ -70,6 +70,7 @@ export default {
 	getCourseIsBuy(courseId) {
 		return request({
 			url: `/course/course/is-buy/${courseId}`,
+			isLogin: true
 		})
 	},
 	/**
@@ -78,14 +79,29 @@ export default {
 	 */
 	getCourseBuyList(courseId) {
 		return request({
-			url: `/course/course/buy/list/${courseId}`
+			url: `/course/course/buy/list/${courseId}`,
+			isLogin: true
 		})
 	},
 	addCourseComment(data) {
 		return request({
 			url: '/course/comment',
 			method: 'POST',
-			data
+			data,
+			isLogin: true
 		})
-	}
+	},
+	/**
+	 * 我的学习进度
+	 * @param {Object} query 条件对象
+	 * @param {Object} current 当前页码
+	 * @param {Object} size 每页显示多少条
+	 */
+	getStudyList(current = 1, size = 10) {
+		return request({
+			url: '/course/course/study/list',
+			method: 'POST',
+			data: {current, size}
+		})
+	},
 }

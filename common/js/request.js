@@ -1,4 +1,7 @@
-import { msg } from './util.js'
+import {
+	msg
+} from './util.js'
+import store from '@/store'
 
 // 基础URL
 // #ifndef H5
@@ -12,9 +15,24 @@ const BASE_URL = '/api'
 // #endif
 
 const request = (options = {}) => {
+	const accessToken = store.state.accessToken
+	if (accessToken) {
+		// oauth2协议
+		options.header = {
+			'Authorization': `Bearer ${accessToken}`
+		}
+	}
+
 	// resolve 正常响应，reject异常响应
 	return new Promise((resolve, reject) => {
+		if (options.isLogin && !accessToken) {
+			uni.navigateTo({
+				url: '/pages/auth/login'
+			})
+			return
+		}
 		uni.request({
+			header: options.header || {},
 			url: BASE_URL + options.url,
 			method: options.method || 'GET',
 			data: options.data || {},
@@ -29,7 +47,7 @@ const request = (options = {}) => {
 				reject(err)
 			}
 		})
-	}) 
+	})
 }
 
 // 导出

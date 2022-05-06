@@ -6,7 +6,8 @@ export default {
 	 */
 	getUserBalance() {
 		return request({
-			url: '/pay/user/balance'
+			url: '/pay/user/balance',
+			isLogin: true
 		})
 	},
 	/**
@@ -17,7 +18,8 @@ export default {
 		return request({
 			url: '/pay/order/pay',
 			method: 'POST',
-			data
+			data,
+			isLogin: true
 		})
 	},
 
@@ -29,7 +31,8 @@ export default {
 		return request({
 			url: '/pay/orderInfo/wxpay',
 			method: 'POST',
-			data
+			data,
+			isLogin: true
 		})
 	},
 
@@ -41,7 +44,8 @@ export default {
 		return request({
 			url: '/pay/orderInfo/wxmppay',
 			method: 'POST',
-			data
+			data,
+			isLogin: true
 		})
 	},
 
@@ -53,7 +57,8 @@ export default {
 		return request({
 			url: '/pay/orderInfo/alipay',
 			method: 'POST',
-			data
+			data,
+			isLogin: true
 		})
 	},
 
@@ -62,7 +67,8 @@ export default {
 	 */
 	getUserOrderList() {
 		return request({
-			url: '/pay/order/user/list'
+			url: '/pay/order/user/list',
+			isLogin: true
 		})
 	},
 	/**
@@ -72,7 +78,8 @@ export default {
 	deleteOrder(orderId) {
 		return request({
 			url: `/pay/order/${orderId}`,
-			method: 'DELETE'
+			method: 'DELETE',
+			isLogin: true
 		})
 	},
 	/**
@@ -82,7 +89,8 @@ export default {
 	cancelOrder(orderId) {
 		return request({
 			url: `/pay/order/cancel/${orderId}`,
-			method: 'PUT'
+			method: 'PUT',
+			isLogin: true
 		})
 	},
 }

@@ -34,7 +34,8 @@ export default {
 		return request({
 			url: '/auth/logout', // /auth/logout?accessToken=${accessToken}
 			method: 'GET',
-			data: { accessToken }
+			data: { accessToken },
+			isLogin: true
 		})
 	}
 
